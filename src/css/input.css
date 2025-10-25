@@ -1,0 +1,66 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom CSS for things Tailwind can't handle */
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  body {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
+
+@layer components {
+  /* Custom button styles with warm colors */
+  .btn-primary {
+    @apply px-8 py-4 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors duration-200 font-medium;
+  }
+  
+  .btn-secondary {
+    @apply px-8 py-4 bg-secondary-100 text-secondary-900 rounded-lg hover:bg-secondary-200 transition-colors duration-200 font-medium;
+  }
+  
+  /* Card component */
+  .card {
+    @apply bg-white p-6 rounded-lg border-2 border-secondary-200 hover:border-secondary-300 transition-colors duration-200;
+  }
+  
+  /* Section container */
+  .section-container {
+    @apply max-w-6xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+  
+  /* Content styling */
+  .content-text {
+    @apply text-gray-700 leading-relaxed;
+  }
+  
+  .content-heading {
+    @apply font-serif text-primary-900;
+  }
+}
+
+@layer utilities {
+  /* Custom text gradient */
+  .text-gradient {
+    @apply bg-gradient-to-r from-primary-600 to-secondary-600 bg-clip-text text-transparent;
+  }
+  
+  /* Custom shadow utilities */
+  .shadow-warm {
+    box-shadow: 0 10px 30px -10px rgba(184, 107, 68, 0.2);
+  }
+  
+  .shadow-warm-lg {
+    box-shadow: 0 20px 40px -15px rgba(184, 107, 68, 0.25);
+  }
+  
+  /* Smooth scroll padding for fixed header */
+  .scroll-mt-20 {
+    scroll-margin-top: 5rem;
+  }
+}
