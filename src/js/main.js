@@ -6,7 +6,8 @@ document.addEventListener('DOMContentLoaded', () => {
   initContactForm();
   initSmoothScroll();
   initDetailsAnimations();
-  initScrollAnimations();
+  // Temporarily disable scroll animations causing content to disappear
+  // initScrollAnimations();
 });
 
 // Contact form handling
