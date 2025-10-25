@@ -1,0 +1,10 @@
+# Robots.txt for a2agents.com
+# Currently blocking all search engines while site is under development
+
+User-agent: *
+Disallow: /
+
+# Remove this file or update it when ready to launch:
+# User-agent: *
+# Allow: /
+# Sitemap: https://a2agents.com/sitemap.xml
