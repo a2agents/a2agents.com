@@ -6,12 +6,132 @@
   <meta name="description" content="A2Agents - Human Excellence meets AI Transformation. Leadership coaching and AI evals consulting for executives.">
   <title>A2Agents - a Human Layer in the AI era</title>
   <link rel="stylesheet" href="styles.css">
-  
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+
   <!-- Favicon and meta tags -->
   <meta property="og:title" content="Agent to Agents - a Human Layer for the AI era">
   <meta property="og:description" content="Human Excellence meets AI Transformation. Executive coaching and AI evals consulting for modern leaders.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://a2agents.com">
+
+  <!-- Contact Section Styles -->
+  <style>
+    .contact-section {
+        background-color: #F5F1EB;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 60px 20px;
+        text-align: center;
+    }
+
+    .contact-section h1 {
+        font-family: 'Playfair Display', serif;
+        font-size: 64px;
+        font-weight: 700;
+        color: #5D3A2E;
+        margin-bottom: 30px;
+        line-height: 1.2;
+    }
+
+    .contact-section .subtitle {
+        font-size: 24px;
+        color: #7A7A7A;
+        margin-bottom: 50px;
+        font-weight: 400;
+    }
+
+    .cta-button {
+        display: inline-block;
+        background-color: #A66B5C;
+        color: white;
+        font-size: 22px;
+        font-weight: 500;
+        padding: 20px 60px;
+        border-radius: 12px;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        margin-bottom: 40px;
+    }
+
+    .cta-button:hover {
+        background-color: #8F5B4D;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(166, 107, 92, 0.3);
+    }
+
+    .referral-note {
+        font-size: 16px;
+        color: #999999;
+    }
+
+    .contact-footer {
+        background-color: #1A2332;
+        color: white;
+        padding: 40px 20px;
+        text-align: center;
+    }
+
+    .contact-footer .copyright {
+        font-size: 18px;
+        margin-bottom: 15px;
+    }
+
+    .contact-footer .tagline {
+        font-size: 18px;
+        color: #B8B8B8;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .contact-section h1 {
+            font-size: 42px;
+        }
+
+        .contact-section .subtitle {
+            font-size: 18px;
+            margin-bottom: 40px;
+        }
+
+        .cta-button {
+            font-size: 18px;
+            padding: 16px 40px;
+        }
+
+        .contact-footer .copyright,
+        .contact-footer .tagline {
+            font-size: 16px;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .contact-section {
+            padding: 40px 20px;
+        }
+
+        .contact-section h1 {
+            font-size: 32px;
+        }
+
+        .contact-section .subtitle {
+            font-size: 16px;
+        }
+
+        .cta-button {
+            font-size: 16px;
+            padding: 14px 30px;
+        }
+
+        .referral-note {
+            font-size: 14px;
+        }
+    }
+  </style>
 </head>
 <body class="font-sans text-gray-900 bg-warm-50">
 
@@ -358,30 +478,17 @@
   </section>
 
   <!-- CONTACT -->
-  <section id="contact" class="py-24 md:py-32 px-4 bg-gradient-to-br from-primary-50 to-secondary-50">
-    <div class="max-w-2xl mx-auto">
-      <h2 class="text-4xl md:text-5xl font-serif font-bold text-center mb-12 text-primary-900">
-        Book a 30 minute call
-      </h2>
-      <p class="text-xl text-center text-gray-700 mb-12">
-        Every transformation starts with a conversation
-      </p>
- <a href="https://calendar.app.google/hEthvkLHVEHGzByz9" class="cta-button">Let's Talk</a>
-        <p class="text-sm text-center text-gray-600 mt-4">
-          New clients accepted only via referral
-        </p>
-      </form>
-    </div>
+  <section id="contact" class="contact-section">
+    <h1>Book a 30 minute call</h1>
+    <p class="subtitle">Every transformation starts with a conversation</p>
+    <a href="https://calendar.app.google/hEthvkLHVEHGzByz9" class="cta-button">Let's Talk</a>
+    <p class="referral-note">New clients accepted only via referral</p>
   </section>
 
   <!-- Footer -->
-  <footer class="py-12 px-4 bg-gray-900 text-white">
-    <div class="max-w-6xl mx-auto text-center">
-      <p class="text-lg mb-4">© 2024 A2Agents. All rights reserved.</p>
-      <p class="text-secondary-300">
-        Human First \ AI-Native
-      </p>
-    </div>
+  <footer class="contact-footer">
+    <p class="copyright">© 2024 A2Agents. All rights reserved.</p>
+    <p class="tagline">Human First \ AI-Native</p>
   </footer>
 
   <script src="js/main.js"></script>
