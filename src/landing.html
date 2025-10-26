@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="A2Agents - a Human Layer in the AI era. We make teams more capable.">
+    <title>A2Agents - a Human Layer in the AI era</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+
+    <style>
+        /* ===== GLOBAL STYLES ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Georgia', serif;
+            background-color: #f5f3f0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ===== MAIN CONTENT SECTION ===== */
+        /* This is the hero section with the main headline */
+        .hero-section {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 60px 20px;
+            text-align: center;
+        }
+
+        .container {
+            max-width: 800px;
+        }
+
+        /* Main headline - EDIT THIS TEXT BELOW IN THE HTML */
+        h1 {
+            font-size: clamp(3rem, 8vw, 6rem);
+            color: #5d3a2e;
+            font-weight: 400;
+            line-height: 1.1;
+            margin-bottom: 3rem;
+            letter-spacing: -0.02em;
+        }
+
+        /* Subtitle "Agent to Agents" - EDIT THIS TEXT BELOW IN THE HTML */
+        .subtitle {
+            font-size: clamp(1.2rem, 3vw, 1.5rem);
+            color: #8b7355;
+            font-weight: 300;
+            margin-bottom: 2rem;
+        }
+
+        /* Tagline - EDIT THIS TEXT BELOW IN THE HTML */
+        .tagline {
+            font-size: clamp(1.2rem, 3vw, 1.5rem);
+            color: #8b7355;
+            font-weight: 300;
+            margin-bottom: 3rem;
+        }
+
+        /* Call to action button - EDIT THE LINK AND TEXT BELOW IN THE HTML */
+        .cta-button {
+            background-color: #a16d52;
+            color: #f5f3f0;
+            padding: 1.2rem 3rem;
+            font-size: 1.3rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            transition: background-color 0.3s ease;
+            font-family: 'Georgia', serif;
+            margin-bottom: 4rem;
+        }
+
+        .cta-button:hover {
+            background-color: #8b5a42;
+        }
+
+        /* ===== TESTIMONIAL SECTION ===== */
+        .testimonial-section {
+            background-color: #faf8f5;
+            padding: 60px 20px;
+            text-align: center;
+        }
+
+        .testimonial-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        /* Testimonial quote box */
+        .testimonial-quote {
+            background-color: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(93, 58, 46, 0.1);
+            border-left: 4px solid #a16d52;
+        }
+
+        /* Quote text - EDIT THIS TEXT BELOW IN THE HTML */
+        .testimonial-quote p {
+            font-size: 1.2rem;
+            font-style: italic;
+            color: #5d3a2e;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+
+        /* Quote attribution - EDIT THIS TEXT BELOW IN THE HTML */
+        .testimonial-author {
+            font-size: 1rem;
+            color: #8b7355;
+            font-style: normal;
+        }
+
+        /* ===== FOOTER SECTION ===== */
+        footer {
+            background-color: #1A2332;
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+        }
+
+        footer .copyright {
+            font-size: 18px;
+            margin-bottom: 15px;
+            font-family: 'Inter', sans-serif;
+        }
+
+        footer .tagline {
+            font-size: 18px;
+            color: #B8B8B8;
+            font-family: 'Inter', sans-serif;
+        }
+
+        /* ===== RESPONSIVE DESIGN FOR MOBILE ===== */
+        @media (max-width: 768px) {
+            .hero-section {
+                padding: 40px 20px;
+            }
+
+            .testimonial-quote {
+                padding: 30px 20px;
+            }
+
+            .testimonial-quote p {
+                font-size: 1rem;
+            }
+
+            footer .copyright,
+            footer .tagline {
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ========================================== -->
+    <!-- HERO SECTION - EDIT CONTENT BELOW -->
+    <!-- ========================================== -->
+    <section class="hero-section">
+        <div class="container">
+
+            <!-- MAIN HEADLINE - Edit the text between <h1> tags -->
+            <h1>a<br>Human<br>Layer<br>in the<br>AI era</h1>
+
+            <!-- SUBTITLE - Edit the text between <p class="subtitle"> tags -->
+            <p class="subtitle">Agent to Agents</p>
+
+            <!-- TAGLINE - Edit the text between <p class="tagline"> tags -->
+            <p class="tagline">We make teams more capable</p>
+
+            <!-- CALL TO ACTION BUTTON -->
+            <!-- To change button text: edit text between <a> tags -->
+            <!-- To change button link: edit the href="..." part -->
+            <a href="https://calendar.app.google/hEthvkLHVEHGzByz9" class="cta-button">Let's Talk</a>
+
+        </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- TESTIMONIAL SECTION - EDIT CONTENT BELOW -->
+    <!-- ========================================== -->
+    <section class="testimonial-section">
+        <div class="testimonial-container">
+            <div class="testimonial-quote">
+
+                <!-- TESTIMONIAL QUOTE - Edit the text between <p> tags -->
+                <p>"We were able to accomplish what would have taken two quarters in two weeks. We would not have done it without Agent to Agents."</p>
+
+                <!-- TESTIMONIAL AUTHOR - Edit the text between <span> tags -->
+                <span class="testimonial-author">- Senior PM, Google</span>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- FOOTER SECTION - EDIT CONTENT BELOW -->
+    <!-- ========================================== -->
+    <footer>
+        <!-- COPYRIGHT - Edit the year and text between <p> tags -->
+        <p class="copyright">© 2024 A2Agents. All rights reserved.</p>
+
+        <!-- TAGLINE - Edit the text between <p> tags -->
+        <p class="tagline">Human First \ AI-Native</p>
+    </footer>
+
+</body>
+</html>
