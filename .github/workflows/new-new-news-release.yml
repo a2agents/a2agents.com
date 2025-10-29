@@ -12,11 +12,6 @@ on:
         description: 'Maximum number of artifacts'
         required: false
         default: '5'
-      use_mock:
-        description: 'Use mock data'
-        required: false
-        type: boolean
-        default: false
 
   # Auto-trigger on push to main (uses default query)
   push:
@@ -44,31 +39,28 @@ jobs:
         cd new_new_news
         pip install -r requirements.txt
 
-    - name: Set query and mock flag
+    - name: Validate API key
+      run: |
+        if [ -z "${{ secrets.YOU_API_KEY }}" ]; then
+          echo "❌ ERROR: YOU_API_KEY secret is not set"
+          echo "Please add YOU_API_KEY to organization secrets"
+          exit 1
+        fi
+        echo "✅ API key is configured"
+
+    - name: Set query and max artifacts
       id: config
       run: |
         # Use inputs if workflow_dispatch, otherwise use defaults for push
         if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
           echo "query=${{ github.event.inputs.query }}" >> $GITHUB_OUTPUT
           echo "max_artifacts=${{ github.event.inputs.max_artifacts }}" >> $GITHUB_OUTPUT
-          echo "use_mock=${{ github.event.inputs.use_mock }}" >> $GITHUB_OUTPUT
         else
           echo "query=Find 2020 artifacts related to COVID vaccine development" >> $GITHUB_OUTPUT
           echo "max_artifacts=5" >> $GITHUB_OUTPUT
-          echo "use_mock=false" >> $GITHUB_OUTPUT
         fi
 
-    - name: Run research system (with mock data)
-      if: ${{ steps.config.outputs.use_mock == 'true' }}
-      run: |
-        cd new_new_news
-        python main.py "${{ steps.config.outputs.query }}" \
-          --max-artifacts ${{ steps.config.outputs.max_artifacts }} \
-          --format json \
-          --output research_report.json
-
-    - name: Run research system (with real API)
-      if: ${{ steps.config.outputs.use_mock == 'false' }}
+    - name: Run research system
       env:
         YOU_API_KEY: ${{ secrets.YOU_API_KEY }}
       run: |
@@ -214,9 +206,6 @@ for i, artifact in enumerate(summary.get('top_3_artifacts', [])[:3], 1):
 notes += "\n## Metadata\n"
 notes += f"- **Timestamp:** {metadata.get('timestamp', 'N/A')}\n"
 notes += f"- **System Version:** {metadata.get('system_version', 'N/A')}\n"
-
-if metadata.get('mock_data'):
-    notes += "\n⚠️ **Note:** This report was generated using mock data.\n"
 
 print(notes)
 EOF
