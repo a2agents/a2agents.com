@@ -1,0 +1,113 @@
+name: Demo - New New News
+
+on:
+  # Manual trigger only - for demos
+  workflow_dispatch:
+    inputs:
+      scenario:
+        description: 'Demo scenario'
+        required: true
+        type: choice
+        options:
+          - 'COVID Vaccine Research'
+          - 'AI Breakthroughs'
+          - 'Open Source Software'
+          - 'Custom Query'
+      custom_query:
+        description: 'Custom query (if Custom Query selected)'
+        required: false
+        default: ''
+
+jobs:
+  demo:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+
+    - name: Install dependencies
+      run: |
+        cd new_new_news
+        pip install -r requirements.txt
+
+    - name: Set query based on scenario
+      id: set-query
+      run: |
+        case "${{ github.event.inputs.scenario }}" in
+          "COVID Vaccine Research")
+            echo "query=Find 2020 artifacts related to COVID vaccine development" >> $GITHUB_OUTPUT
+            ;;
+          "AI Breakthroughs")
+            echo "query=2020 artificial intelligence breakthroughs and research" >> $GITHUB_OUTPUT
+            ;;
+          "Open Source Software")
+            echo "query=significant open source software releases from 2020" >> $GITHUB_OUTPUT
+            ;;
+          "Custom Query")
+            echo "query=${{ github.event.inputs.custom_query }}" >> $GITHUB_OUTPUT
+            ;;
+        esac
+
+    - name: Run demo query
+      run: |
+        cd new_new_news
+        python main.py "${{ steps.set-query.outputs.query }}" \
+          --max-artifacts 5 \
+          --format markdown \
+          --output demo_results.md
+
+    - name: Upload results (JSON)
+      uses: actions/upload-artifact@v3
+      with:
+        name: demo-results-json
+        path: new_new_news/demo_results.md.json
+
+    - name: Upload results (Markdown)
+      uses: actions/upload-artifact@v3
+      with:
+        name: demo-results-markdown
+        path: new_new_news/demo_results.md
+      continue-on-error: true
+
+    - name: Display results summary
+      run: |
+        cd new_new_news
+
+        echo "# 🎯 Demo Results: ${{ github.event.inputs.scenario }}" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "**Query:** ${{ steps.set-query.outputs.query }}" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+
+        if [ -f demo_results.md.json ]; then
+          # Extract and display key findings
+          python << 'EOF' >> $GITHUB_STEP_SUMMARY
+import json
+with open('demo_results.md.json', 'r') as f:
+    data = json.load(f)
+
+summary = data.get('executive_summary', {})
+
+print(f"## Executive Summary\n")
+print(f"- **Artifacts Found:** {summary.get('total_artifacts_found', 0)}")
+print(f"- **Total Estimated Value:** ${summary.get('total_estimated_value', 0):,}")
+print(f"- **Average Confidence:** {summary.get('average_confidence_score', 0):.2f}\n")
+
+print(f"## Top 3 Artifacts\n")
+for i, artifact in enumerate(summary.get('top_3_artifacts', [])[:3], 1):
+    print(f"{i}. **{artifact['title']}** ({artifact['type']})")
+    print(f"   - Value: ${artifact['estimated_value']:,}\n")
+
+print(f"## Key Findings\n")
+for finding in summary.get('key_findings', []):
+    print(f"- {finding}")
+EOF
+        fi
+
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "📥 Download the full report from the Artifacts section above." >> $GITHUB_STEP_SUMMARY

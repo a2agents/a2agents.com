@@ -58,6 +58,3 @@ test_*.md
 # API keys and secrets
 .env
 new_new_news/.env
-
-# GitHub workflows (can't be pushed via GitHub App - add manually)
-.github/workflows/
