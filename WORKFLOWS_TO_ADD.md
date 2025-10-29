@@ -31,9 +31,9 @@ cd a2agents.com
 # Checkout the branch
 git checkout claude/youcom-api-exploration-011CUaZkXPcSTYpT9Aam3XQ9
 
-# Copy workflow files
+# Copy workflow files from docs to workflows directory
 mkdir -p .github/workflows
-cp /path/to/local/workflows/* .github/workflows/
+cp docs/github-actions/*.yml .github/workflows/
 
 # Commit and push
 git add .github/workflows/
@@ -43,24 +43,19 @@ git push
 
 ## File Locations
 
-The files are located at:
-- `/home/user/a2agents.com/.github/workflows/test-new-new-news.yml`
-- `/home/user/a2agents.com/.github/workflows/demo-new-new-news.yml`
-- `/home/user/a2agents.com/.github/workflows/README.md`
+The workflow files are available in the repository at:
+- `docs/github-actions/test-new-new-news.yml`
+- `docs/github-actions/demo-new-new-news.yml`
+- `docs/github-actions/README.md`
+
+These need to be copied to `.github/workflows/` in your repository to be active.
 
 ## File Contents
 
-### test-new-new-news.yml
-
-See: `/home/user/a2agents.com/.github/workflows/test-new-new-news.yml`
-
-### demo-new-new-news.yml
-
-See: `/home/user/a2agents.com/.github/workflows/demo-new-new-news.yml`
-
-### README.md
-
-See: `/home/user/a2agents.com/.github/workflows/README.md`
+The complete workflow files with all configuration are available in:
+- `docs/github-actions/test-new-new-news.yml` - Automated testing
+- `docs/github-actions/demo-new-new-news.yml` - Interactive demos
+- `docs/github-actions/README.md` - Complete documentation
 
 ## Why This Happened
 

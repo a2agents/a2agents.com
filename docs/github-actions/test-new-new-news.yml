@@ -1,0 +1,93 @@
+name: Test New New News
+
+on:
+  # Allow manual trigger from GitHub Actions tab
+  workflow_dispatch:
+    inputs:
+      query:
+        description: 'Research query'
+        required: true
+        default: 'Find 2020 artifacts related to COVID vaccine development'
+      max_artifacts:
+        description: 'Maximum number of artifacts'
+        required: false
+        default: '5'
+      use_mock:
+        description: 'Use mock data (true/false)'
+        required: false
+        default: 'true'
+
+  # Also run on push to main
+  push:
+    branches: [ main ]
+    paths:
+      - 'new_new_news/**'
+
+  # And on pull requests
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'new_new_news/**'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+
+    - name: Install dependencies
+      run: |
+        cd new_new_news
+        pip install -r requirements.txt
+
+    - name: Run tests with mock data
+      if: ${{ github.event.inputs.use_mock != 'false' }}
+      run: |
+        cd new_new_news
+        python main.py "${{ github.event.inputs.query || 'Find 2020 artifacts related to COVID vaccine development' }}" \
+          --max-artifacts ${{ github.event.inputs.max_artifacts || 5 }} \
+          --format json \
+          --output test_results.json
+
+    - name: Run tests with real API
+      if: ${{ github.event.inputs.use_mock == 'false' }}
+      env:
+        YOU_API_KEY: ${{ secrets.YOU_API_KEY }}
+      run: |
+        cd new_new_news
+        python main.py "${{ github.event.inputs.query || 'Find 2020 artifacts related to COVID vaccine development' }}" \
+          --max-artifacts ${{ github.event.inputs.max_artifacts || 5 }} \
+          --format json \
+          --output test_results.json \
+          --no-mock
+
+    - name: Upload results
+      uses: actions/upload-artifact@v3
+      with:
+        name: research-results
+        path: new_new_news/test_results.json
+
+    - name: Display summary
+      run: |
+        cd new_new_news
+        echo "## Research Results" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "**Query:** ${{ github.event.inputs.query || 'Find 2020 artifacts related to COVID vaccine development' }}" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+
+        # Extract key metrics from JSON
+        if [ -f test_results.json ]; then
+          NUM_ARTIFACTS=$(python -c "import json; data=json.load(open('test_results.json')); print(data['metadata']['num_artifacts'])")
+          TOTAL_VALUE=$(python -c "import json; data=json.load(open('test_results.json')); print(f\"\${data['metadata']['total_estimated_value']:,}\")")
+
+          echo "**Artifacts Found:** $NUM_ARTIFACTS" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Total Estimated Value:** $TOTAL_VALUE" >> $GITHUB_STEP_SUMMARY
+        fi
