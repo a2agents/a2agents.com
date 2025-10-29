@@ -1,0 +1,273 @@
+name: New New News - Generate & Release Artifacts
+
+on:
+  # Manual trigger with customization
+  workflow_dispatch:
+    inputs:
+      query:
+        description: 'Research query'
+        required: true
+        default: 'Find 2020 artifacts related to COVID vaccine development'
+      max_artifacts:
+        description: 'Maximum number of artifacts'
+        required: false
+        default: '5'
+      use_mock:
+        description: 'Use mock data'
+        required: false
+        type: boolean
+        default: false
+
+  # Auto-trigger on push to main (uses default query)
+  push:
+    branches: [ main ]
+    paths:
+      - 'new_new_news/**'
+
+jobs:
+  generate-and-release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write  # Required for creating releases
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+
+    - name: Install dependencies
+      run: |
+        cd new_new_news
+        pip install -r requirements.txt
+
+    - name: Set query and mock flag
+      id: config
+      run: |
+        # Use inputs if workflow_dispatch, otherwise use defaults for push
+        if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+          echo "query=${{ github.event.inputs.query }}" >> $GITHUB_OUTPUT
+          echo "max_artifacts=${{ github.event.inputs.max_artifacts }}" >> $GITHUB_OUTPUT
+          echo "use_mock=${{ github.event.inputs.use_mock }}" >> $GITHUB_OUTPUT
+        else
+          echo "query=Find 2020 artifacts related to COVID vaccine development" >> $GITHUB_OUTPUT
+          echo "max_artifacts=5" >> $GITHUB_OUTPUT
+          echo "use_mock=false" >> $GITHUB_OUTPUT
+        fi
+
+    - name: Run research system (with mock data)
+      if: ${{ steps.config.outputs.use_mock == 'true' }}
+      run: |
+        cd new_new_news
+        python main.py "${{ steps.config.outputs.query }}" \
+          --max-artifacts ${{ steps.config.outputs.max_artifacts }} \
+          --format json \
+          --output research_report.json
+
+    - name: Run research system (with real API)
+      if: ${{ steps.config.outputs.use_mock == 'false' }}
+      env:
+        YOU_API_KEY: ${{ secrets.YOU_API_KEY }}
+      run: |
+        cd new_new_news
+        python main.py "${{ steps.config.outputs.query }}" \
+          --max-artifacts ${{ steps.config.outputs.max_artifacts }} \
+          --format json \
+          --output research_report.json \
+          --no-mock
+
+    - name: Generate additional formats
+      run: |
+        cd new_new_news
+
+        # Create txt format (human-readable)
+        python << 'EOF'
+import json
+with open('research_report.json', 'r') as f:
+    data = json.load(f)
+
+with open('research_report.txt', 'w') as out:
+    out.write("="*80 + "\n")
+    out.write("NEW NEW NEWS - RESEARCH REPORT\n")
+    out.write("="*80 + "\n\n")
+
+    # Executive Summary
+    summary = data.get('executive_summary', {})
+    out.write("EXECUTIVE SUMMARY\n")
+    out.write("-" * 40 + "\n")
+    out.write(f"Query: {data['metadata']['query']}\n")
+    out.write(f"Artifacts Found: {summary.get('total_artifacts_found', 0)}\n")
+    out.write(f"Total Estimated Value: ${summary.get('total_estimated_value', 0):,}\n")
+    out.write(f"Average Confidence: {summary.get('average_confidence_score', 0):.2f}\n\n")
+
+    # Artifacts
+    out.write("ARTIFACTS\n")
+    out.write("-" * 40 + "\n\n")
+    for i, artifact in enumerate(data.get('artifacts', []), 1):
+        out.write(f"{i}. {artifact['title']}\n")
+        out.write(f"   Type: {artifact['type']}\n")
+        out.write(f"   Value: ${artifact['estimated_value']:,}\n")
+        out.write(f"   Confidence: {artifact['confidence_score']:.2f}\n")
+        out.write(f"   Description: {artifact['description']}\n")
+        out.write(f"   Citation: {artifact['citation']}\n\n")
+EOF
+
+        # Create CSV format (spreadsheet-friendly)
+        python << 'EOF'
+import json
+import csv
+
+with open('research_report.json', 'r') as f:
+    data = json.load(f)
+
+with open('artifacts.csv', 'w', newline='') as csvfile:
+    fieldnames = ['title', 'type', 'estimated_value', 'confidence_score', 'description', 'citation']
+    writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+
+    writer.writeheader()
+    for artifact in data.get('artifacts', []):
+        writer.writerow({
+            'title': artifact['title'],
+            'type': artifact['type'],
+            'estimated_value': artifact['estimated_value'],
+            'confidence_score': artifact['confidence_score'],
+            'description': artifact['description'],
+            'citation': artifact['citation']
+        })
+EOF
+
+        # Create markdown summary
+        python << 'EOF'
+import json
+with open('research_report.json', 'r') as f:
+    data = json.load(f)
+
+with open('RESEARCH_SUMMARY.md', 'w') as out:
+    out.write("# New New News - Research Summary\n\n")
+
+    summary = data.get('executive_summary', {})
+    out.write(f"**Query:** {data['metadata']['query']}\n\n")
+    out.write(f"**Generated:** {data['metadata']['timestamp']}\n\n")
+
+    out.write("## Executive Summary\n\n")
+    out.write(f"- **Artifacts Found:** {summary.get('total_artifacts_found', 0)}\n")
+    out.write(f"- **Total Estimated Value:** ${summary.get('total_estimated_value', 0):,}\n")
+    out.write(f"- **Average Confidence:** {summary.get('average_confidence_score', 0):.2f}\n\n")
+
+    out.write("## Key Findings\n\n")
+    for finding in summary.get('key_findings', []):
+        out.write(f"- {finding}\n")
+
+    out.write("\n## Top 3 Artifacts\n\n")
+    for i, artifact in enumerate(summary.get('top_3_artifacts', [])[:3], 1):
+        out.write(f"{i}. **{artifact['title']}** ({artifact['type']})\n")
+        out.write(f"   - Estimated Value: ${artifact['estimated_value']:,}\n")
+        out.write(f"   - Confidence: {artifact['confidence_score']:.2f}\n\n")
+EOF
+
+    - name: Create release tag
+      id: tag
+      run: |
+        # Create timestamp-based tag
+        TAG="v$(date +'%Y%m%d-%H%M%S')"
+        echo "tag=$TAG" >> $GITHUB_OUTPUT
+
+    - name: Generate release notes
+      id: notes
+      run: |
+        cd new_new_news
+
+        # Extract metadata from JSON
+        NOTES=$(python << 'EOF'
+import json
+with open('research_report.json', 'r') as f:
+    data = json.load(f)
+
+summary = data.get('executive_summary', {})
+metadata = data.get('metadata', {})
+
+notes = f"""# New New News Research Report
+
+## Query
+{metadata.get('query', 'N/A')}
+
+## Summary
+- **Artifacts Found:** {summary.get('total_artifacts_found', 0)}
+- **Total Estimated Value:** ${summary.get('total_estimated_value', 0):,}
+- **Average Confidence Score:** {summary.get('average_confidence_score', 0):.2f}
+
+## Key Findings
+"""
+
+for finding in summary.get('key_findings', []):
+    notes += f"- {finding}\n"
+
+notes += "\n## Top 3 Artifacts\n"
+for i, artifact in enumerate(summary.get('top_3_artifacts', [])[:3], 1):
+    notes += f"{i}. **{artifact['title']}** ({artifact['type']})\n"
+    notes += f"   - Value: ${artifact['estimated_value']:,}\n"
+    notes += f"   - Confidence: {artifact['confidence_score']:.2f}\n\n"
+
+notes += "\n## Metadata\n"
+notes += f"- **Timestamp:** {metadata.get('timestamp', 'N/A')}\n"
+notes += f"- **System Version:** {metadata.get('system_version', 'N/A')}\n"
+
+if metadata.get('mock_data'):
+    notes += "\n⚠️ **Note:** This report was generated using mock data.\n"
+
+print(notes)
+EOF
+)
+
+        # Save to file for the release step
+        echo "$NOTES" > release_notes.md
+
+    - name: Create GitHub Release
+      uses: softprops/action-gh-release@v1
+      with:
+        tag_name: ${{ steps.tag.outputs.tag }}
+        name: "Research Report - ${{ steps.config.outputs.query }}"
+        body_path: new_new_news/release_notes.md
+        files: |
+          new_new_news/research_report.json
+          new_new_news/research_report.txt
+          new_new_news/artifacts.csv
+          new_new_news/RESEARCH_SUMMARY.md
+        draft: false
+        prerelease: false
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Display workflow summary
+      run: |
+        cd new_new_news
+        echo "# 🎯 Research Report Generated" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "**Query:** ${{ steps.config.outputs.query }}" >> $GITHUB_STEP_SUMMARY
+        echo "**Release Tag:** ${{ steps.tag.outputs.tag }}" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+
+        # Extract and display key findings
+        python << 'EOF' >> $GITHUB_STEP_SUMMARY
+import json
+with open('research_report.json', 'r') as f:
+    data = json.load(f)
+
+summary = data.get('executive_summary', {})
+
+print(f"## Executive Summary\n")
+print(f"- **Artifacts Found:** {summary.get('total_artifacts_found', 0)}")
+print(f"- **Total Estimated Value:** ${summary.get('total_estimated_value', 0):,}")
+print(f"- **Average Confidence:** {summary.get('average_confidence_score', 0):.2f}\n")
+
+print(f"## Top 3 Artifacts\n")
+for i, artifact in enumerate(summary.get('top_3_artifacts', [])[:3], 1):
+    print(f"{i}. **{artifact['title']}** ({artifact['type']})")
+    print(f"   - Value: ${artifact['estimated_value']:,}\n")
+EOF
+
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "📥 **Download artifacts from the [Releases page](../../releases/tag/${{ steps.tag.outputs.tag }})**" >> $GITHUB_STEP_SUMMARY
