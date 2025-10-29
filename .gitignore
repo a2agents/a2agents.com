@@ -38,3 +38,20 @@ yarn-error.log*
 *.temp
 tmp/
 temp/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Test output files
+*_results.json
+all_api_results.json
+research_report.json
+demo_*.json
+demo_*.md
+demo_*.html
+
+# API keys and secrets
+.env
+new_new_news/.env

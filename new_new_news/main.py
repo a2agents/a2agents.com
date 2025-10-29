@@ -1,0 +1,273 @@
+#!/usr/bin/env python3
+"""
+New New News - Main Orchestration System
+Multi-agent research system for the 2020 Human Artifacts Index
+"""
+
+import sys
+import json
+from typing import Dict, Any, Optional
+from datetime import datetime
+
+from you_api_client import YouAPIClient
+from agents import (
+    OrchestratorAgent,
+    WebResearcherAgent,
+    PricingNormalizerAgent,
+    CitationVerifierAgent,
+    ReportComposerAgent
+)
+from config import MAX_ARTIFACTS_PER_QUERY, USE_MOCK_DATA
+
+
+class NewNewNewsSystem:
+    """
+    Main orchestration system for New New News
+
+    Coordinates all 5 agents to research and catalog professional artifacts
+    """
+
+    def __init__(self, use_mock: bool = USE_MOCK_DATA):
+        """
+        Initialize the multi-agent system
+
+        Args:
+            use_mock: Whether to use mock data (set to False once API key is activated)
+        """
+        print("\n" + "="*80)
+        print("NEW NEW NEWS - 2020 Human Artifacts Index")
+        print("Multi-Agent Research System powered by You.com APIs")
+        print("="*80 + "\n")
+
+        # Initialize API client
+        self.api_client = YouAPIClient(use_mock=use_mock)
+
+        # Initialize agents
+        print("Initializing agents...")
+        self.orchestrator = OrchestratorAgent()
+        self.web_researcher = WebResearcherAgent(self.api_client)
+        self.pricing_normalizer = PricingNormalizerAgent(self.api_client)
+        self.citation_verifier = CitationVerifierAgent(self.api_client)
+        self.report_composer = ReportComposerAgent()
+
+        print(f"✓ {self.orchestrator.name}")
+        print(f"✓ {self.web_researcher.name}")
+        print(f"✓ {self.pricing_normalizer.name}")
+        print(f"✓ {self.citation_verifier.name}")
+        print(f"✓ {self.report_composer.name}")
+        print("\nAll agents initialized and ready.\n")
+
+    def research(
+        self,
+        query: str,
+        max_artifacts: int = MAX_ARTIFACTS_PER_QUERY,
+        output_format: str = "json"
+    ) -> Dict[str, Any]:
+        """
+        Execute full research workflow
+
+        Args:
+            query: Research query (e.g., "Find 2020 artifacts related to COVID vaccine development")
+            max_artifacts: Maximum number of artifacts to return
+            output_format: Output format ("json", "markdown", "html")
+
+        Returns:
+            Research report dictionary
+        """
+        print("="*80)
+        print("STARTING RESEARCH WORKFLOW")
+        print("="*80)
+        print(f"Query: {query}")
+        print(f"Max Artifacts: {max_artifacts}")
+        print(f"Output Format: {output_format}\n")
+
+        start_time = datetime.now()
+
+        # PHASE 1: Orchestration - Plan research strategy
+        print("\n" + "-"*80)
+        print("PHASE 1: ORCHESTRATION - Planning Research Strategy")
+        print("-"*80)
+
+        orchestration_result = self.orchestrator.execute({
+            "query": query,
+            "max_artifacts": max_artifacts
+        })
+
+        research_plan = orchestration_result["research_plan"]
+        search_queries = orchestration_result["search_queries"]
+
+        print(f"✓ Research plan created")
+        print(f"  - Artifact types: {', '.join(research_plan['artifact_types'])}")
+        print(f"  - Search queries: {len(search_queries)}")
+        for idx, q in enumerate(search_queries, 1):
+            print(f"    {idx}. {q}")
+
+        # PHASE 2: Web Research - Find sources
+        print("\n" + "-"*80)
+        print("PHASE 2: WEB RESEARCH - Finding Sources")
+        print("-"*80)
+
+        research_result = self.web_researcher.execute({
+            "search_queries": search_queries,
+            "max_results_per_query": 5
+        })
+
+        potential_artifacts = research_result["potential_artifacts"][:max_artifacts]
+
+        print(f"✓ Web research completed")
+        print(f"  - Total sources found: {research_result['total_sources_found']}")
+        print(f"  - Potential artifacts identified: {len(potential_artifacts)}")
+
+        # PHASE 3: Pricing Normalization - Estimate valuations
+        print("\n" + "-"*80)
+        print("PHASE 3: PRICING NORMALIZATION - Estimating Valuations")
+        print("-"*80)
+
+        pricing_result = self.pricing_normalizer.execute({
+            "artifacts": potential_artifacts,
+            "use_llm_enhancement": True
+        })
+
+        valued_artifacts = pricing_result["artifacts"]
+
+        print(f"✓ Valuations completed")
+        print(f"  - Artifacts valued: {len(valued_artifacts)}")
+        print(f"  - Total estimated value: ${pricing_result['total_estimated_value']:,}")
+        print(f"  - Average confidence: {pricing_result['average_confidence']:.2f}")
+
+        # PHASE 4: Citation Verification - Verify sources
+        print("\n" + "-"*80)
+        print("PHASE 4: CITATION VERIFICATION - Verifying Sources")
+        print("-"*80)
+
+        verification_result = self.citation_verifier.execute({
+            "artifacts": valued_artifacts
+        })
+
+        verified_artifacts = verification_result["artifacts"]
+        stats = verification_result["verification_stats"]
+
+        print(f"✓ Citation verification completed")
+        print(f"  - Artifacts with sufficient sources: {stats['artifacts_with_sufficient_sources']}")
+        print(f"  - Artifacts needing more sources: {stats['artifacts_needing_sources']}")
+
+        # PHASE 5: Report Composition - Generate final report
+        print("\n" + "-"*80)
+        print("PHASE 5: REPORT COMPOSITION - Generating Final Report")
+        print("-"*80)
+
+        report_result = self.report_composer.execute({
+            "query": query,
+            "artifacts": verified_artifacts,
+            "research_plan": research_plan,
+            "format": output_format
+        })
+
+        final_report = report_result["report"]
+        formatted_output = report_result["formatted_output"]
+
+        print(f"✓ Report generated")
+        print(f"  - Format: {output_format}")
+        print(f"  - Final artifact count: {final_report['metadata']['num_artifacts']}")
+
+        # Summary
+        end_time = datetime.now()
+        duration = (end_time - start_time).total_seconds()
+
+        print("\n" + "="*80)
+        print("RESEARCH WORKFLOW COMPLETED")
+        print("="*80)
+        print(f"Duration: {duration:.2f} seconds")
+        print(f"Artifacts Found: {len(verified_artifacts)}")
+        print(f"Total Value: ${final_report['metadata']['total_estimated_value']:,}")
+        print("="*80 + "\n")
+
+        return {
+            "report": final_report,
+            "formatted_output": formatted_output,
+            "execution_metadata": {
+                "duration_seconds": duration,
+                "start_time": start_time.isoformat(),
+                "end_time": end_time.isoformat()
+            }
+        }
+
+    def save_report(self, result: Dict[str, Any], filename: str):
+        """Save research report to file"""
+        # Save JSON report
+        json_filename = filename.replace(".json", "") + ".json"
+        with open(json_filename, 'w') as f:
+            json.dump(result["report"], f, indent=2)
+        print(f"✓ JSON report saved to: {json_filename}")
+
+        # Save formatted output
+        format_type = result["report"]["metadata"].get("format", "json")
+        if format_type == "markdown":
+            md_filename = filename.replace(".json", ".md")
+            with open(md_filename, 'w') as f:
+                f.write(result["formatted_output"])
+            print(f"✓ Markdown report saved to: {md_filename}")
+        elif format_type == "html":
+            html_filename = filename.replace(".json", ".html")
+            with open(html_filename, 'w') as f:
+                f.write(result["formatted_output"])
+            print(f"✓ HTML report saved to: {html_filename}")
+
+
+def main():
+    """Main entry point"""
+    import argparse
+
+    parser = argparse.ArgumentParser(
+        description="New New News - 2020 Human Artifacts Index Research System"
+    )
+    parser.add_argument(
+        "query",
+        type=str,
+        help="Research query (e.g., 'Find 2020 artifacts related to COVID vaccine development')"
+    )
+    parser.add_argument(
+        "--max-artifacts",
+        type=int,
+        default=10,
+        help="Maximum number of artifacts to find (default: 10)"
+    )
+    parser.add_argument(
+        "--format",
+        choices=["json", "markdown", "html"],
+        default="json",
+        help="Output format (default: json)"
+    )
+    parser.add_argument(
+        "--output",
+        type=str,
+        default="research_report.json",
+        help="Output filename (default: research_report.json)"
+    )
+    parser.add_argument(
+        "--no-mock",
+        action="store_true",
+        help="Use real API (disable mock data)"
+    )
+
+    args = parser.parse_args()
+
+    # Initialize system
+    use_mock = not args.no_mock
+    system = NewNewNewsSystem(use_mock=use_mock)
+
+    # Execute research
+    result = system.research(
+        query=args.query,
+        max_artifacts=args.max_artifacts,
+        output_format=args.format
+    )
+
+    # Save report
+    system.save_report(result, args.output)
+
+    print("\n✓ Research complete! Check the output files for results.")
+
+
+if __name__ == "__main__":
+    main()
