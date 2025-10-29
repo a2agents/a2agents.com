@@ -10,6 +10,8 @@ from config import (
     SEARCH_ENDPOINT,
     NEWS_ENDPOINT,
     RAG_ENDPOINT,
+    CONTENTS_ENDPOINT,
+    EXPRESS_ENDPOINT,
     USE_MOCK_DATA
 )
 
@@ -130,6 +132,76 @@ class YouAPIClient:
             print("Falling back to mock data...")
             return self._mock_rag_query(query)
 
+    def fetch_content(self, url: str) -> Dict[str, Any]:
+        """
+        Fetch full content from a URL using You.com Contents API
+
+        Args:
+            url: URL to fetch content from
+
+        Returns:
+            Content data with markdown, HTML, and metadata
+        """
+        if self.use_mock:
+            return self._mock_fetch_content(url)
+
+        try:
+            params = {
+                "url": url
+            }
+
+            response = requests.get(
+                CONTENTS_ENDPOINT,
+                headers=self.headers,
+                params=params,
+                timeout=30
+            )
+
+            response.raise_for_status()
+            return response.json()
+
+        except Exception as e:
+            print(f"API Error in fetch_content: {e}")
+            print("Falling back to mock data...")
+            return self._mock_fetch_content(url)
+
+    def express_query(self, query: str, context: Optional[str] = None) -> Dict[str, Any]:
+        """
+        Query using You.com Express API for structured extraction
+
+        Args:
+            query: Question or extraction task
+            context: Optional context/content to analyze
+
+        Returns:
+            Express API response with structured data
+        """
+        if self.use_mock:
+            return self._mock_express_query(query, context)
+
+        try:
+            payload = {
+                "query": query
+            }
+
+            if context:
+                payload["context"] = context
+
+            response = requests.post(
+                EXPRESS_ENDPOINT,
+                headers=self.headers,
+                json=payload,
+                timeout=30
+            )
+
+            response.raise_for_status()
+            return response.json()
+
+        except Exception as e:
+            print(f"API Error in express_query: {e}")
+            print("Falling back to mock data...")
+            return self._mock_express_query(query, context)
+
     # Mock Data Methods
     def _mock_web_search(self, query: str, num_results: int) -> Dict[str, Any]:
         """Generate mock web search results"""
@@ -246,6 +318,82 @@ These artifacts collectively represent over $200 million in professional deliver
             ]
         }
         return mock_response
+
+    def _mock_fetch_content(self, url: str) -> Dict[str, Any]:
+        """Generate mock content fetch results"""
+        mock_content = {
+            "url": url,
+            "markdown": """# Pfizer and BioNTech Announce Vaccine Candidate
+
+## November 18, 2020
+
+Pfizer Inc. and BioNTech SE announced their mRNA-based vaccine candidate, BNT162b2, against SARS-CoV-2 has demonstrated evidence of efficacy against COVID-19.
+
+### Key Findings
+
+- **Efficacy Rate**: 95% effective
+- **Study Population**: 43,000+ participants
+- **Timeline**: Fastest vaccine development in history
+- **Estimated Value**: Phase 3 clinical trial data valued at $50-100 million
+
+The vaccine candidate demonstrated efficacy against COVID-19 in participants without prior evidence of SARS-CoV-2 infection, based on the first interim efficacy analysis conducted on November 18, 2020.
+
+This represented a major breakthrough in vaccine development, utilizing novel mRNA technology that could be adapted for future pandemics.""",
+            "html": "<html><body><h1>Pfizer and BioNTech Announce Vaccine Candidate</h1><p>Pfizer Inc. and BioNTech SE announced their mRNA-based vaccine candidate...</p></body></html>",
+            "title": "Pfizer and BioNTech Announce Vaccine Candidate Against COVID-19",
+            "published_date": "2020-11-18",
+            "author": "Pfizer Inc.",
+            "word_count": 1250
+        }
+        return mock_content
+
+    def _mock_express_query(self, query: str, context: Optional[str] = None) -> Dict[str, Any]:
+        """Generate mock Express API response"""
+
+        # Different responses based on query type
+        if "decompose" in query.lower() or "sub-queries" in query.lower() or "queries for" in query.lower():
+            # Query decomposition mock
+            return {
+                "answer": json.dumps({
+                    "queries": [
+                        "COVID-19 vaccine development 2020",
+                        "mRNA technology breakthrough 2020",
+                        "FDA emergency use authorization COVID vaccines 2020",
+                        "Zoom video conferencing growth 2020",
+                        "remote work platforms 2020",
+                        "N95 mask manufacturing 2020",
+                        "contact tracing apps 2020",
+                        "telehealth adoption 2020",
+                        "ventilator production 2020",
+                        "WHO pandemic guidelines 2020",
+                        "stimulus package 2020 CARES Act",
+                        "online education platforms 2020",
+                        "Netflix pandemic content 2020",
+                        "essential worker protocols 2020",
+                        "quarantine hotel systems 2020",
+                        "COVID testing innovations 2020",
+                        "social distancing technology 2020",
+                        "grocery delivery services 2020",
+                        "work from home security tools 2020",
+                        "pandemic modeling software 2020"
+                    ]
+                }),
+                "confidence": 0.95
+            }
+        else:
+            # Structured data extraction mock
+            return {
+                "answer": json.dumps({
+                    "year_confirmed": "2020",
+                    "price_data": "Phase 3 clinical trial: $50-100 million",
+                    "estimated_value": 75000000,
+                    "confidence": 0.92,
+                    "supporting_quote": "Pfizer Inc. and BioNTech SE announced their mRNA-based vaccine candidate, BNT162b2, demonstrated 95% efficacy in Phase 3 trials completed in November 2020.",
+                    "contradictions": [],
+                    "category": "Healthcare - Clinical Trials"
+                }),
+                "confidence": 0.92
+            }
 
 
 # Example usage

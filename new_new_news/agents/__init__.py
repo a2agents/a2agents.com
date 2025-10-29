@@ -9,6 +9,8 @@ from .web_researcher import WebResearcherAgent
 from .pricing_normalizer import PricingNormalizerAgent
 from .citation_verifier import CitationVerifierAgent
 from .report_composer import ReportComposerAgent
+from .query_decomposer import QueryDecomposerAgent
+from .deep_verifier import DeepVerifierAgent
 
 __all__ = [
     "BaseAgent",
@@ -16,5 +18,7 @@ __all__ = [
     "WebResearcherAgent",
     "PricingNormalizerAgent",
     "CitationVerifierAgent",
-    "ReportComposerAgent"
+    "ReportComposerAgent",
+    "QueryDecomposerAgent",
+    "DeepVerifierAgent"
 ]

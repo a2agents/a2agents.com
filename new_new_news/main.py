@@ -15,9 +15,11 @@ from agents import (
     WebResearcherAgent,
     PricingNormalizerAgent,
     CitationVerifierAgent,
-    ReportComposerAgent
+    ReportComposerAgent,
+    QueryDecomposerAgent,
+    DeepVerifierAgent
 )
-from config import MAX_ARTIFACTS_PER_QUERY, USE_MOCK_DATA
+from config import MAX_ARTIFACTS_PER_QUERY, USE_MOCK_DATA, DEFAULT_TARGET_ARTIFACTS
 
 
 class NewNewNewsSystem:
@@ -49,12 +51,16 @@ class NewNewNewsSystem:
         self.pricing_normalizer = PricingNormalizerAgent(self.api_client)
         self.citation_verifier = CitationVerifierAgent(self.api_client)
         self.report_composer = ReportComposerAgent()
+        self.query_decomposer = QueryDecomposerAgent(self.api_client)
+        self.deep_verifier = DeepVerifierAgent(self.api_client)
 
         print(f"✓ {self.orchestrator.name}")
         print(f"✓ {self.web_researcher.name}")
         print(f"✓ {self.pricing_normalizer.name}")
         print(f"✓ {self.citation_verifier.name}")
         print(f"✓ {self.report_composer.name}")
+        print(f"✓ {self.query_decomposer.name}")
+        print(f"✓ {self.deep_verifier.name}")
         print("\nAll agents initialized and ready.\n")
 
     def research(
@@ -213,6 +219,205 @@ class NewNewNewsSystem:
                 f.write(result["formatted_output"])
             print(f"✓ HTML report saved to: {html_filename}")
 
+    def generate_report(
+        self,
+        topic: str,
+        target_artifacts: int = DEFAULT_TARGET_ARTIFACTS,
+        output_format: str = "json"
+    ) -> Dict[str, Any]:
+        """
+        Generate comprehensive report with multiple queries
+
+        Args:
+            topic: Broad research topic (e.g., "2020 Human Artifacts")
+            target_artifacts: Target number of artifacts (default: 100)
+            output_format: Output format ("json", "markdown", "html")
+
+        Returns:
+            Comprehensive research report
+        """
+        print("="*80)
+        print("GENERATING COMPREHENSIVE REPORT")
+        print("="*80)
+        print(f"Topic: {topic}")
+        print(f"Target Artifacts: {target_artifacts}")
+        print(f"Output Format: {output_format}\n")
+
+        start_time = datetime.now()
+        all_artifacts = []
+        api_stats = {
+            "search_calls": 0,
+            "contents_calls": 0,
+            "express_calls": 0
+        }
+
+        # PHASE 1: Query Decomposition
+        print("\n" + "="*80)
+        print("PHASE 1: QUERY DECOMPOSITION")
+        print("="*80)
+
+        # Calculate how many queries we need
+        artifacts_per_query = 5  # Conservative estimate
+        num_queries = max(15, min(25, (target_artifacts // artifacts_per_query) + 5))
+
+        decomp_result = self.query_decomposer.execute({
+            "topic": topic,
+            "target_queries": num_queries
+        })
+
+        queries = decomp_result["queries"]
+        categories = decomp_result["categories"]
+        api_stats["express_calls"] += 1  # Query decomposition uses Express API
+
+        print(f"\n✓ Generated {len(queries)} sub-queries")
+        print(f"  Categories: {', '.join(set(categories.values()))}")
+
+        # PHASE 2: Execute queries and collect artifacts
+        print("\n" + "="*80)
+        print("PHASE 2: MULTI-QUERY RESEARCH")
+        print("="*80)
+
+        for idx, query in enumerate(queries, 1):
+            print(f"\n[Query {idx}/{len(queries)}] {query}")
+            print(f"  Category: {categories.get(query, 'General')}")
+
+            try:
+                # Run single query research (reuses existing workflow)
+                result = self.research(
+                    query=query,
+                    max_artifacts=artifacts_per_query,
+                    output_format="json"
+                )
+
+                query_artifacts = result["report"].get("artifacts", [])
+                print(f"  ✓ Found {len(query_artifacts)} artifacts")
+
+                # Track API usage (search happens in web_researcher)
+                api_stats["search_calls"] += 1
+
+                # Add to collection
+                all_artifacts.extend(query_artifacts)
+
+                # Stop if we have enough
+                if len(all_artifacts) >= target_artifacts:
+                    print(f"\n  ℹ️  Reached target of {target_artifacts} artifacts, stopping research")
+                    break
+
+            except Exception as e:
+                print(f"  ⚠️  Error in query: {e}")
+                continue
+
+        print(f"\n✓ Multi-query research complete: {len(all_artifacts)} total artifacts collected")
+
+        # PHASE 3: Deep Verification
+        print("\n" + "="*80)
+        print("PHASE 3: DEEP VERIFICATION")
+        print("="*80)
+
+        # Only verify top artifacts (sorted by confidence)
+        artifacts_to_verify = sorted(
+            all_artifacts,
+            key=lambda x: x.get("confidence_score", 0),
+            reverse=True
+        )[:target_artifacts]
+
+        verification_result = self.deep_verifier.execute({
+            "artifacts": artifacts_to_verify,
+            "top_sources": 2  # Fetch 2 sources per artifact for speed
+        })
+
+        verified_artifacts = verification_result["verified_artifacts"]
+        v_stats = verification_result["verification_stats"]
+
+        # Track API usage
+        api_stats["contents_calls"] = v_stats["successful_fetches"]
+        api_stats["express_calls"] += len(verified_artifacts)  # Each artifact gets Express extraction
+
+        print(f"\n✓ Deep verification complete")
+        print(f"  Year confirmed (2020): {v_stats['year_confirmed']}/{len(verified_artifacts)}")
+
+        # PHASE 4: Deduplication and ranking
+        print("\n" + "="*80)
+        print("PHASE 4: DEDUPLICATION AND RANKING")
+        print("="*80)
+
+        # Remove duplicates by URL
+        unique_artifacts = {}
+        for artifact in verified_artifacts:
+            url = artifact.get("url", "")
+            if url and url not in unique_artifacts:
+                unique_artifacts[url] = artifact
+
+        deduplicated = list(unique_artifacts.values())
+
+        # Rank by multiple factors
+        def score_artifact(a):
+            confidence = a.get("confidence_score", 0.5)
+            verified_conf = a.get("verified_confidence", 0.5)
+            value = a.get("estimated_value", 0)
+            year_match = 1.0 if a.get("year_verified") == "2020" else 0.5
+            source_count = len(a.get("sources", []))
+
+            return (
+                confidence * 0.3 +
+                verified_conf * 0.3 +
+                min(value / 100000000, 1.0) * 0.2 +  # Normalize value
+                year_match * 0.1 +
+                min(source_count / 3, 1.0) * 0.1
+            )
+
+        ranked_artifacts = sorted(deduplicated, key=score_artifact, reverse=True)[:target_artifacts]
+
+        print(f"✓ Deduplication complete")
+        print(f"  Unique artifacts: {len(ranked_artifacts)}")
+
+        # PHASE 5: Report Composition
+        print("\n" + "="*80)
+        print("PHASE 5: REPORT COMPOSITION")
+        print("="*80)
+
+        final_result = self.report_composer.execute({
+            "query": topic,
+            "artifacts": ranked_artifacts,
+            "output_format": output_format,
+            "research_metadata": {
+                "queries_executed": len(queries),
+                "categories_covered": list(set(categories.values())),
+                "api_usage": api_stats
+            }
+        })
+
+        end_time = datetime.now()
+        duration = (end_time - start_time).total_seconds()
+
+        print(f"\n✓ Report composition complete")
+
+        # Final stats
+        print("\n" + "="*80)
+        print("REPORT GENERATION COMPLETED")
+        print("="*80)
+        print(f"Duration: {duration/60:.1f} minutes ({duration:.0f} seconds)")
+        print(f"Artifacts in Report: {len(ranked_artifacts)}")
+        print(f"Total Estimated Value: ${sum(a.get('estimated_value', 0) for a in ranked_artifacts):,}")
+        print(f"\nAPI Usage:")
+        print(f"  - Search API: {api_stats['search_calls']} calls")
+        print(f"  - Contents API: {api_stats['contents_calls']} calls")
+        print(f"  - Express API: {api_stats['express_calls']} calls")
+        print(f"  - Total: {sum(api_stats.values())} API calls")
+        print("="*80 + "\n")
+
+        return {
+            "report": final_result["report"],
+            "formatted_output": final_result["formatted_output"],
+            "execution_metadata": {
+                "duration_seconds": duration,
+                "start_time": start_time.isoformat(),
+                "end_time": end_time.isoformat(),
+                "api_usage": api_stats,
+                "queries_executed": len(queries)
+            }
+        }
+
 
 def main():
     """Main entry point"""
@@ -249,6 +454,17 @@ def main():
         action="store_true",
         help="Use real API (disable mock data)"
     )
+    parser.add_argument(
+        "--report-mode",
+        action="store_true",
+        help="Generate comprehensive report with multiple queries"
+    )
+    parser.add_argument(
+        "--target-artifacts",
+        type=int,
+        default=DEFAULT_TARGET_ARTIFACTS,
+        help=f"Target artifacts for report mode (default: {DEFAULT_TARGET_ARTIFACTS})"
+    )
 
     args = parser.parse_args()
 
@@ -256,17 +472,28 @@ def main():
     use_mock = not args.no_mock
     system = NewNewNewsSystem(use_mock=use_mock)
 
-    # Execute research
-    result = system.research(
-        query=args.query,
-        max_artifacts=args.max_artifacts,
-        output_format=args.format
-    )
+    # Execute research or generate report
+    if args.report_mode:
+        # Report mode: comprehensive multi-query report
+        result = system.generate_report(
+            topic=args.query,
+            target_artifacts=args.target_artifacts,
+            output_format=args.format
+        )
+        print(f"\n✓ Report generation complete! Generated {args.target_artifacts}-artifact report.")
+    else:
+        # Single query mode
+        result = system.research(
+            query=args.query,
+            max_artifacts=args.max_artifacts,
+            output_format=args.format
+        )
+        print("\n✓ Research complete!")
 
     # Save report
     system.save_report(result, args.output)
 
-    print("\n✓ Research complete! Check the output files for results.")
+    print(f"   Check the output files for results.")
 
 
 if __name__ == "__main__":
