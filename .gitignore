@@ -46,11 +46,14 @@ __pycache__/
 
 # Test output files
 *_results.json
+*.md.json
 all_api_results.json
 research_report.json
 demo_*.json
 demo_*.md
 demo_*.html
+test_*.json
+test_*.md
 
 # API keys and secrets
 .env
