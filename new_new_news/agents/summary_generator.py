@@ -215,6 +215,11 @@ Return ONLY valid JSON:
 
         try:
             answer = response.get("answer", "")
+
+            # Handle empty response
+            if not answer or not answer.strip():
+                raise ValueError("Empty response from Express API")
+
             summary = json.loads(answer)
 
             required_fields = ["narrative", "key_patterns", "value_distribution", "key_finding"]
@@ -225,7 +230,7 @@ Return ONLY valid JSON:
 
         except (json.JSONDecodeError, ValueError) as e:
             logger.error(f"Failed to parse summary response: {e}")
-            logger.debug(f"Response: {response}")
+            logger.debug(f"Response answer: '{response.get('answer', '')}'")
             raise
 
     def _validate_summary(self, summary: Dict, year: int) -> bool:
@@ -237,8 +242,8 @@ Return ONLY valid JSON:
         narrative = summary.get("narrative", "")
         if len(narrative) < 300:
             issues.append("Narrative too short (< 300 chars)")
-        if len(narrative) > 1500:
-            issues.append("Narrative too long (> 1500 chars)")
+        if len(narrative) > 2500:
+            issues.append("Narrative too long (> 2500 chars)")
 
         # Structure checks
         patterns = summary.get("key_patterns", [])

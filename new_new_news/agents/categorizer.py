@@ -174,6 +174,11 @@ CRITICAL: Every artifact index (0-{len(artifacts)-1}) must appear in exactly one
 
         try:
             answer = response.get("answer", "")
+
+            # Handle empty response
+            if not answer or not answer.strip():
+                raise ValueError("Empty response from Express API")
+
             categorization = json.loads(answer)
 
             if "categories" not in categorization:

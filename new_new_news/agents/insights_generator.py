@@ -258,6 +258,11 @@ Return ONLY valid JSON:
 
         try:
             answer = response.get("answer", "")
+
+            # Handle empty response
+            if not answer or not answer.strip():
+                raise ValueError("Empty response from Express API")
+
             insights = json.loads(answer)
 
             if "insights" not in insights:
