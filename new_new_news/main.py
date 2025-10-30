@@ -20,6 +20,7 @@ from agents import (
     DeepVerifierAgent
 )
 from config import MAX_ARTIFACTS_PER_QUERY, USE_MOCK_DATA, DEFAULT_TARGET_ARTIFACTS
+from report_compiler import ReportCompiler
 
 
 class NewNewNewsSystem:
@@ -198,7 +199,7 @@ class NewNewNewsSystem:
             }
         }
 
-    def save_report(self, result: Dict[str, Any], filename: str):
+    def save_report(self, result: Dict[str, Any], filename: str, compile_full_report: bool = False):
         """Save research report to file"""
         # Save JSON report
         json_filename = filename.replace(".json", "") + ".json"
@@ -206,18 +207,25 @@ class NewNewNewsSystem:
             json.dump(result["report"], f, indent=2)
         print(f"✓ JSON report saved to: {json_filename}")
 
-        # Save formatted output
-        format_type = result["report"]["metadata"].get("format", "json")
-        if format_type == "markdown":
-            md_filename = filename.replace(".json", ".md")
-            with open(md_filename, 'w') as f:
-                f.write(result["formatted_output"])
-            print(f"✓ Markdown report saved to: {md_filename}")
-        elif format_type == "html":
-            html_filename = filename.replace(".json", ".html")
-            with open(html_filename, 'w') as f:
-                f.write(result["formatted_output"])
-            print(f"✓ HTML report saved to: {html_filename}")
+        # If compile_full_report, use Report Compiler for professional output
+        if compile_full_report:
+            print("\nCompiling professional report formats...")
+            compiler = ReportCompiler()
+            output_prefix = filename.replace(".json", "")
+            compiler.compile(result["report"], output_prefix)
+        else:
+            # Save formatted output (legacy)
+            format_type = result["report"]["metadata"].get("format", "json")
+            if format_type == "markdown":
+                md_filename = filename.replace(".json", ".md")
+                with open(md_filename, 'w') as f:
+                    f.write(result["formatted_output"])
+                print(f"✓ Markdown report saved to: {md_filename}")
+            elif format_type == "html":
+                html_filename = filename.replace(".json", ".html")
+                with open(html_filename, 'w') as f:
+                    f.write(result["formatted_output"])
+                print(f"✓ HTML report saved to: {html_filename}")
 
     def generate_report(
         self,
@@ -481,6 +489,9 @@ def main():
             output_format=args.format
         )
         print(f"\n✓ Report generation complete! Generated {args.target_artifacts}-artifact report.")
+
+        # Save with full report compilation (HTML, PDF, CSV, MD)
+        system.save_report(result, args.output, compile_full_report=True)
     else:
         # Single query mode
         result = system.research(
@@ -490,8 +501,8 @@ def main():
         )
         print("\n✓ Research complete!")
 
-    # Save report
-    system.save_report(result, args.output)
+        # Save basic report
+        system.save_report(result, args.output, compile_full_report=False)
 
     print(f"   Check the output files for results.")
 

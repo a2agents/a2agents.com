@@ -1,1 +1,2 @@
 requests>=2.31.0
+weasyprint>=60.0  # For PDF generation (optional)

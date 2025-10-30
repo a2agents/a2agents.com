@@ -5,11 +5,20 @@ on:
   workflow_dispatch:
     inputs:
       query:
-        description: 'Research query'
+        description: 'Research query or report topic'
         required: true
-        default: 'Find 2020 artifacts related to COVID vaccine development'
+        default: '2020 Human Artifacts'
+      report_mode:
+        description: 'Generate comprehensive report'
+        required: false
+        type: boolean
+        default: false
+      target_artifacts:
+        description: 'Target artifacts (for report mode)'
+        required: false
+        default: '25'
       max_artifacts:
-        description: 'Maximum number of artifacts'
+        description: 'Max artifacts (for single query mode)'
         required: false
         default: '5'
 
@@ -48,19 +57,37 @@ jobs:
         fi
         echo "✅ API key is configured"
 
-    - name: Set query and max artifacts
+    - name: Set configuration
       id: config
       run: |
         # Use inputs if workflow_dispatch, otherwise use defaults for push
         if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
           echo "query=${{ github.event.inputs.query }}" >> $GITHUB_OUTPUT
+          echo "report_mode=${{ github.event.inputs.report_mode }}" >> $GITHUB_OUTPUT
+          echo "target_artifacts=${{ github.event.inputs.target_artifacts }}" >> $GITHUB_OUTPUT
           echo "max_artifacts=${{ github.event.inputs.max_artifacts }}" >> $GITHUB_OUTPUT
         else
-          echo "query=Find 2020 artifacts related to COVID vaccine development" >> $GITHUB_OUTPUT
+          echo "query=2020 Human Artifacts" >> $GITHUB_OUTPUT
+          echo "report_mode=false" >> $GITHUB_OUTPUT
+          echo "target_artifacts=25" >> $GITHUB_OUTPUT
           echo "max_artifacts=5" >> $GITHUB_OUTPUT
         fi
 
-    - name: Run research system
+    - name: Run research system (report mode)
+      if: ${{ steps.config.outputs.report_mode == 'true' }}
+      env:
+        YOU_API_KEY: ${{ secrets.YOU_API_KEY }}
+      run: |
+        cd new_new_news
+        python main.py "${{ steps.config.outputs.query }}" \
+          --report-mode \
+          --target-artifacts ${{ steps.config.outputs.target_artifacts }} \
+          --format json \
+          --output research_report.json \
+          --no-mock
+
+    - name: Run research system (single query mode)
+      if: ${{ steps.config.outputs.report_mode != 'true' }}
       env:
         YOU_API_KEY: ${{ secrets.YOU_API_KEY }}
       run: |
@@ -71,94 +98,11 @@ jobs:
           --output research_report.json \
           --no-mock
 
-    - name: Generate additional formats
+    - name: Verify outputs generated
       run: |
         cd new_new_news
-
-        # Create txt format (human-readable)
-        python << 'EOF'
-import json
-with open('research_report.json', 'r') as f:
-    data = json.load(f)
-
-with open('research_report.txt', 'w') as out:
-    out.write("="*80 + "\n")
-    out.write("NEW NEW NEWS - RESEARCH REPORT\n")
-    out.write("="*80 + "\n\n")
-
-    # Executive Summary
-    summary = data.get('executive_summary', {})
-    out.write("EXECUTIVE SUMMARY\n")
-    out.write("-" * 40 + "\n")
-    out.write(f"Query: {data['metadata']['query']}\n")
-    out.write(f"Artifacts Found: {summary.get('total_artifacts_found', 0)}\n")
-    out.write(f"Total Estimated Value: ${summary.get('total_estimated_value', 0):,}\n")
-    out.write(f"Average Confidence: {summary.get('average_confidence_score', 0):.2f}\n\n")
-
-    # Artifacts
-    out.write("ARTIFACTS\n")
-    out.write("-" * 40 + "\n\n")
-    for i, artifact in enumerate(data.get('artifacts', []), 1):
-        out.write(f"{i}. {artifact['title']}\n")
-        out.write(f"   Type: {artifact['type']}\n")
-        out.write(f"   Value: ${artifact['estimated_value']:,}\n")
-        out.write(f"   Confidence: {artifact['confidence_score']:.2f}\n")
-        out.write(f"   Description: {artifact['description']}\n")
-        out.write(f"   Citation: {artifact['citation']}\n\n")
-EOF
-
-        # Create CSV format (spreadsheet-friendly)
-        python << 'EOF'
-import json
-import csv
-
-with open('research_report.json', 'r') as f:
-    data = json.load(f)
-
-with open('artifacts.csv', 'w', newline='') as csvfile:
-    fieldnames = ['title', 'type', 'estimated_value', 'confidence_score', 'description', 'citation']
-    writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
-
-    writer.writeheader()
-    for artifact in data.get('artifacts', []):
-        writer.writerow({
-            'title': artifact['title'],
-            'type': artifact['type'],
-            'estimated_value': artifact['estimated_value'],
-            'confidence_score': artifact['confidence_score'],
-            'description': artifact['description'],
-            'citation': artifact['citation']
-        })
-EOF
-
-        # Create markdown summary
-        python << 'EOF'
-import json
-with open('research_report.json', 'r') as f:
-    data = json.load(f)
-
-with open('RESEARCH_SUMMARY.md', 'w') as out:
-    out.write("# New New News - Research Summary\n\n")
-
-    summary = data.get('executive_summary', {})
-    out.write(f"**Query:** {data['metadata']['query']}\n\n")
-    out.write(f"**Generated:** {data['metadata']['timestamp']}\n\n")
-
-    out.write("## Executive Summary\n\n")
-    out.write(f"- **Artifacts Found:** {summary.get('total_artifacts_found', 0)}\n")
-    out.write(f"- **Total Estimated Value:** ${summary.get('total_estimated_value', 0):,}\n")
-    out.write(f"- **Average Confidence:** {summary.get('average_confidence_score', 0):.2f}\n\n")
-
-    out.write("## Key Findings\n\n")
-    for finding in summary.get('key_findings', []):
-        out.write(f"- {finding}\n")
-
-    out.write("\n## Top 3 Artifacts\n\n")
-    for i, artifact in enumerate(summary.get('top_3_artifacts', [])[:3], 1):
-        out.write(f"{i}. **{artifact['title']}** ({artifact['type']})\n")
-        out.write(f"   - Estimated Value: ${artifact['estimated_value']:,}\n")
-        out.write(f"   - Confidence: {artifact['confidence_score']:.2f}\n\n")
-EOF
+        echo "Checking generated files..."
+        ls -lh research_report.* artifacts_table.csv RESEARCH_SUMMARY.md research_metadata.json || true
 
     - name: Create release tag
       id: tag
@@ -222,9 +166,11 @@ EOF
         body_path: new_new_news/release_notes.md
         files: |
           new_new_news/research_report.json
-          new_new_news/research_report.txt
-          new_new_news/artifacts.csv
+          new_new_news/research_report.html
+          new_new_news/research_report.pdf
+          new_new_news/artifacts_table.csv
           new_new_news/RESEARCH_SUMMARY.md
+          new_new_news/research_metadata.json
         draft: false
         prerelease: false
       env:
