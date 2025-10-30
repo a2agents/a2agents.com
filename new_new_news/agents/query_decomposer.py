@@ -17,6 +17,11 @@ class QueryDecomposerAgent(BaseAgent):
     different categories and aspects of the topic.
     """
 
+    def __init__(self, api_client=None):
+        super().__init__("Query Decomposer")
+        from you_api_client import YouAPIClient
+        self.api_client = api_client or YouAPIClient()
+
     def execute(self, input_data: Dict[str, Any]) -> Dict[str, Any]:
         """
         Decompose a broad topic into specific research queries

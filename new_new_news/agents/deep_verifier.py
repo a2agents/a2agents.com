@@ -17,6 +17,11 @@ class DeepVerifierAgent(BaseAgent):
     structured, verified data including 2020 confirmation and pricing.
     """
 
+    def __init__(self, api_client=None):
+        super().__init__("Deep Verifier")
+        from you_api_client import YouAPIClient
+        self.api_client = api_client or YouAPIClient()
+
     def execute(self, input_data: Dict[str, Any]) -> Dict[str, Any]:
         """
         Perform deep verification on artifacts
