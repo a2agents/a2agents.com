@@ -11,8 +11,11 @@ on:
       report_mode:
         description: 'Generate comprehensive report'
         required: false
-        type: boolean
-        default: false
+        type: choice
+        options:
+          - 'false'
+          - 'true'
+        default: 'false'
       target_artifacts:
         description: 'Target artifacts (for report mode)'
         required: false
