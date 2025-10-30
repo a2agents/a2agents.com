@@ -11,6 +11,7 @@ from .citation_verifier import CitationVerifierAgent
 from .report_composer import ReportComposerAgent
 from .query_decomposer import QueryDecomposerAgent
 from .deep_verifier import DeepVerifierAgent
+from .artifact_enricher import ArtifactEnricherAgent
 
 __all__ = [
     "BaseAgent",
@@ -20,5 +21,6 @@ __all__ = [
     "CitationVerifierAgent",
     "ReportComposerAgent",
     "QueryDecomposerAgent",
-    "DeepVerifierAgent"
+    "DeepVerifierAgent",
+    "ArtifactEnricherAgent"
 ]
