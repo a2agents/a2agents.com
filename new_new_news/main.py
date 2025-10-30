@@ -17,7 +17,11 @@ from agents import (
     CitationVerifierAgent,
     ReportComposerAgent,
     QueryDecomposerAgent,
-    DeepVerifierAgent
+    DeepVerifierAgent,
+    ArtifactEnricherAgent,
+    CategorizerAgent,
+    SummaryGeneratorAgent,
+    InsightsGeneratorAgent
 )
 from config import MAX_ARTIFACTS_PER_QUERY, USE_MOCK_DATA, DEFAULT_TARGET_ARTIFACTS
 from report_compiler import ReportCompiler
@@ -55,6 +59,12 @@ class NewNewNewsSystem:
         self.query_decomposer = QueryDecomposerAgent(self.api_client)
         self.deep_verifier = DeepVerifierAgent(self.api_client)
 
+        # Narrative generation agents
+        self.artifact_enricher = ArtifactEnricherAgent(self.api_client)
+        self.categorizer = CategorizerAgent(self.api_client)
+        self.summary_generator = SummaryGeneratorAgent(self.api_client)
+        self.insights_generator = InsightsGeneratorAgent(self.api_client)
+
         print(f"✓ {self.orchestrator.name}")
         print(f"✓ {self.web_researcher.name}")
         print(f"✓ {self.pricing_normalizer.name}")
@@ -62,6 +72,10 @@ class NewNewNewsSystem:
         print(f"✓ {self.report_composer.name}")
         print(f"✓ {self.query_decomposer.name}")
         print(f"✓ {self.deep_verifier.name}")
+        print(f"✓ {self.artifact_enricher.name}")
+        print(f"✓ {self.categorizer.name}")
+        print(f"✓ {self.summary_generator.name}")
+        print(f"✓ {self.insights_generator.name}")
         print("\nAll agents initialized and ready.\n")
 
     def research(
@@ -379,14 +393,94 @@ class NewNewNewsSystem:
         print(f"✓ Deduplication complete")
         print(f"  Unique artifacts: {len(ranked_artifacts)}")
 
-        # PHASE 5: Report Composition
+        # PHASE 5: Artifact Enrichment (NEW)
         print("\n" + "="*80)
-        print("PHASE 5: REPORT COMPOSITION")
+        print("PHASE 5: ARTIFACT ENRICHMENT")
+        print("="*80)
+
+        enrichment_result = self.artifact_enricher.execute({
+            "artifacts": ranked_artifacts,
+            "year": 2020,
+            "batch_size": 5
+        })
+
+        enriched_artifacts = enrichment_result["enriched_artifacts"]
+        enrichment_meta = enrichment_result["metadata"]
+
+        api_stats["express_calls"] += (len(enriched_artifacts) + 4) // 5  # Batched calls
+
+        print(f"✓ Artifact enrichment complete")
+        print(f"  Enriched: {enrichment_meta['total_enriched']}")
+        print(f"  Fallback: {enrichment_meta['fallback_count']}")
+
+        # PHASE 6: Categorization (NEW)
+        print("\n" + "="*80)
+        print("PHASE 6: CATEGORIZATION")
+        print("="*80)
+
+        categorization_result = self.categorizer.execute({
+            "artifacts": enriched_artifacts,
+            "query": topic,
+            "year": 2020
+        })
+
+        artifact_categories = categorization_result["categories"]
+        cat_meta = categorization_result["metadata"]
+
+        api_stats["express_calls"] += 1  # Categorization uses 1 Express call
+
+        print(f"✓ Categorization complete")
+        print(f"  Categories: {cat_meta['category_count']}")
+        print(f"  Quality Score: {cat_meta['quality_score']:.2f}")
+        for cat in artifact_categories:
+            print(f"    - {cat['name']}: {cat['artifact_count']} artifacts (${cat['total_value']:,})")
+
+        # PHASE 7: Executive Summary (NEW)
+        print("\n" + "="*80)
+        print("PHASE 7: EXECUTIVE SUMMARY")
+        print("="*80)
+
+        exec_summary = self.summary_generator.execute({
+            "artifacts": enriched_artifacts,
+            "categories": {"categories": artifact_categories},
+            "query": topic,
+            "year": 2020
+        })
+
+        api_stats["express_calls"] += 1  # Summary uses 1 Express call
+
+        print(f"✓ Executive summary generated")
+        print(f"  Narrative: {len(exec_summary['narrative'])} characters")
+        print(f"  Key Patterns: {len(exec_summary['key_patterns'])}")
+
+        # PHASE 8: Insights Generation (NEW)
+        print("\n" + "="*80)
+        print("PHASE 8: INSIGHTS GENERATION")
+        print("="*80)
+
+        insights_result = self.insights_generator.execute({
+            "artifacts": enriched_artifacts,
+            "categories": {"categories": artifact_categories},
+            "executive_summary": exec_summary,
+            "query": topic,
+            "year": 2020
+        })
+
+        api_stats["express_calls"] += 1  # Insights uses 1 Express call
+
+        print(f"✓ Insights generated")
+        print(f"  Insights: {len(insights_result['insights'])}")
+        for insight in insights_result['insights']:
+            print(f"    - {insight['title']} (score: {insight.get('quality_score', 0):.2f})")
+
+        # PHASE 9: Report Composition
+        print("\n" + "="*80)
+        print("PHASE 9: REPORT COMPOSITION")
         print("="*80)
 
         final_result = self.report_composer.execute({
             "query": topic,
-            "artifacts": ranked_artifacts,
+            "artifacts": enriched_artifacts,
             "output_format": output_format,
             "research_metadata": {
                 "queries_executed": len(queries),
@@ -394,6 +488,11 @@ class NewNewNewsSystem:
                 "api_usage": api_stats
             }
         })
+
+        # Add narrative components to final result
+        final_result["report"]["categories"] = artifact_categories
+        final_result["report"]["executive_summary"] = exec_summary
+        final_result["report"]["insights"] = insights_result
 
         end_time = datetime.now()
         duration = (end_time - start_time).total_seconds()
