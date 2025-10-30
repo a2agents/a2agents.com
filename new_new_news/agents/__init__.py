@@ -13,6 +13,7 @@ from .query_decomposer import QueryDecomposerAgent
 from .deep_verifier import DeepVerifierAgent
 from .artifact_enricher import ArtifactEnricherAgent
 from .categorizer import CategorizerAgent
+from .summary_generator import SummaryGeneratorAgent
 
 __all__ = [
     "BaseAgent",
@@ -24,5 +25,6 @@ __all__ = [
     "QueryDecomposerAgent",
     "DeepVerifierAgent",
     "ArtifactEnricherAgent",
-    "CategorizerAgent"
+    "CategorizerAgent",
+    "SummaryGeneratorAgent"
 ]
