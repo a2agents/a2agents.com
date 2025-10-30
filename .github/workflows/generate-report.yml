@@ -1,0 +1,68 @@
+name: Generate Report
+
+on:
+  # Allow manual trigger from GitHub Actions tab
+  workflow_dispatch:
+    inputs:
+      query:
+        description: 'Research query or topic'
+        required: true
+        default: '2020 Human Artifacts'
+      report_mode:
+        description: 'Report mode (true/false)'
+        required: false
+        default: 'true'
+      target_artifacts:
+        description: 'Target artifacts for report mode'
+        required: false
+        default: '25'
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+
+    - name: Install dependencies
+      run: |
+        cd new_new_news
+        pip install -r requirements.txt
+
+    - name: Run report generation
+      env:
+        YOU_API_KEY: ${{ secrets.YOU_API_KEY }}
+      run: |
+        cd new_new_news
+        if [ "${{ github.event.inputs.report_mode }}" = "true" ]; then
+          python main.py "${{ github.event.inputs.query }}" \
+            --report-mode \
+            --target-artifacts ${{ github.event.inputs.target_artifacts }} \
+            --format json \
+            --output research_report.json \
+            --no-mock
+        else
+          python main.py "${{ github.event.inputs.query }}" \
+            --max-artifacts 10 \
+            --format json \
+            --output research_report.json \
+            --no-mock
+        fi
+
+    - name: Upload results
+      uses: actions/upload-artifact@v4
+      with:
+        name: research-report
+        path: |
+          new_new_news/research_report.json
+          new_new_news/research_report.html
+          new_new_news/research_report.pdf
+          new_new_news/artifacts_table.csv
+          new_new_news/RESEARCH_SUMMARY.md
+          new_new_news/research_metadata.json
