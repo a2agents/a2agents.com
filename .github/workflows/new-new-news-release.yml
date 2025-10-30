@@ -9,12 +9,8 @@ on:
         required: true
         default: '2020 Human Artifacts'
       report_mode:
-        description: 'Generate comprehensive report'
+        description: 'Generate comprehensive report (true/false)'
         required: false
-        type: choice
-        options:
-          - 'false'
-          - 'true'
         default: 'false'
       target_artifacts:
         description: 'Target artifacts (for report mode)'
