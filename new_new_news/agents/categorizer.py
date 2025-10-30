@@ -9,6 +9,7 @@ from typing import Dict, List, Any
 from collections import defaultdict
 
 from .base_agent import BaseAgent
+from you_api_client import YouAPIClient
 
 logger = logging.getLogger(__name__)
 
@@ -23,7 +24,6 @@ class CategorizerAgent(BaseAgent):
 
     def __init__(self, api_client=None):
         super().__init__("Categorizer")
-        from you_api_client import YouAPIClient
         self.api_client = api_client or YouAPIClient()
 
     def execute(self, input_data: Dict[str, Any]) -> Dict[str, Any]:

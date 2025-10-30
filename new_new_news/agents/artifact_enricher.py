@@ -8,6 +8,7 @@ import logging
 from typing import Dict, List, Any, Optional
 
 from .base_agent import BaseAgent
+from you_api_client import YouAPIClient
 
 logger = logging.getLogger(__name__)
 
@@ -23,7 +24,6 @@ class ArtifactEnricherAgent(BaseAgent):
 
     def __init__(self, api_client=None):
         super().__init__("Artifact Enricher")
-        from you_api_client import YouAPIClient
         self.api_client = api_client or YouAPIClient()
 
     def execute(self, input_data: Dict[str, Any]) -> Dict[str, Any]:
