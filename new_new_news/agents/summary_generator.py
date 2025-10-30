@@ -135,7 +135,9 @@ class SummaryGeneratorAgent(BaseAgent):
     def _build_summary_prompt(self, inputs: Dict, query: str, year: int) -> str:
         """Build executive summary prompt."""
 
-        prompt = f"""You are writing the executive summary for a professional research report.
+        prompt = f"""You are a McKinsey partner writing the executive summary for a C-suite client presentation about "{query}".
+
+Your client wants to understand: What happened in {year}? Why does it matter? What patterns emerged?
 
 REPORT CONTEXT:
 Query: "{query}"
@@ -150,9 +152,17 @@ CATEGORIES IDENTIFIED:
 TOP 3 ARTIFACTS:
 {inputs['top_3_summary']}
 
-TASK: Write an executive summary with four components:
+TASK: Write an executive summary that TELLS THE STORY of {year}.
 
-1. NARRATIVE (2-3 paragraphs, 300-500 words):
+1. NARRATIVE (2-3 paragraphs, 400-600 words):
+
+   TELL A STORY, not just describe data.
+
+   ❌ BAD (descriptive): "This report analyzed {inputs['artifact_count']} artifacts worth ${inputs['total_value']:,}. We found several types of documents including regulatory submissions and research papers. These artifacts are important because..."
+
+   ✅ GOOD (narrative): "The 2020 pandemic triggered the fastest regulatory transformation in FDA history. Within 234 days, emergency frameworks emerged that would normally take a decade—compressed by crisis into three quarters. The {inputs['artifact_count']} artifacts documenting this sprint (${inputs['total_value']:,} in documented value) reveal that policy innovation, not technical breakthroughs, defined the response..."
+
+   Your narrative should:
 
    First paragraph: What this collection of artifacts reveals about {query} in {year}.
    - Start with a strong thesis statement

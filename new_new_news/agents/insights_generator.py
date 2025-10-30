@@ -171,7 +171,9 @@ TOP 5 ARTIFACTS BY VALUE:
     ) -> str:
         """Build insights prompt."""
 
-        prompt = f"""You are a research analyst identifying non-obvious patterns in artifact data.
+        prompt = f"""You are a McKinsey analyst presenting surprising findings to a C-suite client about "{query}".
+
+Your job: Find patterns that would make the CEO say "I didn't know that!" - NOT obvious facts like "most artifacts are research papers."
 
 DATA:
 Query: {query}
@@ -183,7 +185,14 @@ Artifacts: {artifact_count}
 CATEGORIES:
 {category_summary}
 
-TASK: Generate 3-5 insights that reveal non-obvious patterns.
+TASK: Generate 3-5 NON-OBVIOUS insights that challenge assumptions or reveal hidden patterns.
+
+❌ DO NOT GENERATE OBVIOUS INSIGHTS:
+- "Research Paper Dominance" (just counting artifact types)
+- "Healthcare was important in 2020" (obvious from query)
+- "Multiple types of artifacts exist" (trivial observation)
+- "Top artifacts have high value" (tautological)
+- "Government played a role" (assumed)
 
 INSIGHT TYPES TO LOOK FOR:
 

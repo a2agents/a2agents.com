@@ -89,23 +89,38 @@ class CategorizerAgent(BaseAgent):
         # Format artifact summaries
         artifact_summaries = self._format_artifacts_for_categorization(artifacts)
 
-        prompt = f"""You are a research analyst organizing artifacts for a professional report.
+        prompt = f"""You are a McKinsey analyst organizing artifacts for a C-suite client presentation about "{query}".
 
-Given these {len(artifacts)} artifacts about "{query}":
+Given these {len(artifacts)} artifacts:
 
 {artifact_summaries}
 
-Task: Group these artifacts into 3-5 meaningful categories that reveal patterns and insights.
+Task: Create 3-5 DOMAIN-SPECIFIC categories that reveal strategic insights about {query} in {year}.
 
-Guidelines:
+CRITICAL RULES - CATEGORY NAMING:
 
-1. CATEGORY NAMING:
-   - Use specific, domain-relevant names (not generic like "Documents" or "Reports")
-   - Categories should reveal something about the topic
-   - Examples of good names:
-     * "Regulatory Infrastructure" (not "Government Documents")
-     * "Crisis Response Frameworks" (not "Policy Documents")
-     * "Digital Transformation Enablers" (not "Technology")
+❌ NEVER use these generic terms:
+   - "Research Papers" / "Research" / "Studies"
+   - "Policy Documents" / "Policies"
+   - "Regulatory Submissions" / "Regulations"
+   - "Reports" / "Documents" / "Publications"
+   - "Technology" / "Software" / "Data"
+   - "Healthcare" / "Medical" / "Clinical"
+
+✅ INSTEAD, name categories by WHAT THEY ACCOMPLISH or REVEAL:
+
+For COVID-19 vaccine development, use:
+   - "mRNA Platform Validation" (not "Research Papers")
+   - "Emergency Authorization Infrastructure" (not "Regulatory Submissions")
+   - "Operation Warp Speed Mechanisms" (not "Government Policies")
+   - "Clinical Trial Acceleration Methods" (not "Clinical Data")
+
+For telehealth, use:
+   - "Reimbursement Policy Shifts" (not "Policy Documents")
+   - "Virtual Care Platform Adoption" (not "Technology Reports")
+   - "Provider Licensing Reform" (not "Regulatory Changes")
+
+Categories must be SPECIFIC to "{query}" - someone reading the category name should immediately understand the story you're telling about {year}.
 
 2. CATEGORY SELECTION:
    - Look for natural clusters by:
