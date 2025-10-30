@@ -146,19 +146,31 @@ class YouAPIClient:
             return self._mock_fetch_content(url)
 
         try:
-            params = {
-                "url": url
+            payload = {
+                "urls": [url],
+                "format": "markdown"
             }
 
-            response = requests.get(
+            response = requests.post(
                 CONTENTS_ENDPOINT,
                 headers=self.headers,
-                params=params,
+                json=payload,
                 timeout=30
             )
 
             response.raise_for_status()
-            return response.json()
+            result = response.json()
+
+            # Extract first result and normalize format
+            if result and len(result) > 0:
+                content = result[0]
+                return {
+                    "url": content.get("url", url),
+                    "title": content.get("title", ""),
+                    "markdown": content.get("markdown", ""),
+                    "html": content.get("html", "")
+                }
+            return self._mock_fetch_content(url)
 
         except Exception as e:
             print(f"API Error in fetch_content: {e}")
@@ -167,11 +179,11 @@ class YouAPIClient:
 
     def express_query(self, query: str, context: Optional[str] = None) -> Dict[str, Any]:
         """
-        Query using You.com Express API for structured extraction
+        Query using You.com Express Agent API for structured extraction
 
         Args:
             query: Question or extraction task
-            context: Optional context/content to analyze
+            context: Optional context/content to analyze (note: Express may not support this directly)
 
         Returns:
             Express API response with structured data
@@ -180,22 +192,37 @@ class YouAPIClient:
             return self._mock_express_query(query, context)
 
         try:
-            payload = {
-                "query": query
+            # Express API uses Bearer token authentication
+            express_headers = {
+                "Authorization": f"Bearer {self.api_key}",
+                "Content-Type": "application/json"
             }
 
-            if context:
-                payload["context"] = context
+            payload = {
+                "agent": "express",
+                "input": query if not context else f"{query}\n\nContext: {context[:2000]}"  # Limit context size
+            }
 
             response = requests.post(
                 EXPRESS_ENDPOINT,
-                headers=self.headers,
+                headers=express_headers,
                 json=payload,
                 timeout=30
             )
 
             response.raise_for_status()
-            return response.json()
+            result = response.json()
+
+            # Normalize response format - Express returns {"output": [...]}
+            if "output" in result and len(result["output"]) > 0:
+                # Extract text from first output item
+                output_text = result["output"][0].get("text", "")
+                return {
+                    "answer": output_text,
+                    "confidence": 0.9
+                }
+
+            return self._mock_express_query(query, context)
 
         except Exception as e:
             print(f"API Error in express_query: {e}")

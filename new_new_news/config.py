@@ -15,8 +15,8 @@ SEARCH_ENDPOINT = f"{YOU_API_BASE_URL}/search"
 NEWS_ENDPOINT = f"{YOU_API_BASE_URL}/news"
 RAG_ENDPOINT = f"{YOU_API_BASE_URL}/rag"
 CHAT_ENDPOINT = f"{YOU_API_BASE_URL}/chat"
-CONTENTS_ENDPOINT = f"{YOU_API_BASE_URL}/contents"
-EXPRESS_ENDPOINT = f"{YOU_API_BASE_URL}/express"
+CONTENTS_ENDPOINT = "https://api.ydc-index.io/v1/contents"
+EXPRESS_ENDPOINT = "https://api.you.com/v1/agents/runs"
 
 # Mock mode - set to False once API key is activated
 USE_MOCK_DATA = True
