@@ -318,6 +318,12 @@ class ReportCompiler:
 """
 
             for idx, artifact in enumerate(cat_artifacts, 1):
+                # Extract nested valuation data
+                valuation = artifact.get('valuation', {})
+                estimated_value = valuation.get('estimated_value', artifact.get('estimated_value', 0))
+                confidence_score = valuation.get('confidence_score', artifact.get('confidence_score', 0))
+                year = artifact.get('date', artifact.get('year_verified', 'N/A'))
+
                 html += f"""
             <div class="artifact">
                 <div class="artifact-title">{idx}. {artifact.get('title', 'Unknown')}</div>
@@ -327,13 +333,13 @@ class ReportCompiler:
                         <span class="meta-label">Type:</span> {artifact.get('type', 'N/A')}
                     </div>
                     <div class="meta-item">
-                        <span class="meta-label">Value:</span> ${artifact.get('estimated_value', 0):,}
+                        <span class="meta-label">Value:</span> ${estimated_value:,}
                     </div>
                     <div class="meta-item">
-                        <span class="meta-label">Confidence:</span> {artifact.get('confidence_score', 0):.2f}
+                        <span class="meta-label">Confidence:</span> {confidence_score:.2f}
                     </div>
                     <div class="meta-item">
-                        <span class="meta-label">Year:</span> {artifact.get('year_verified', 'N/A')}
+                        <span class="meta-label">Year:</span> {year}
                     </div>
                 </div>
 
@@ -382,17 +388,22 @@ class ReportCompiler:
 
             writer.writeheader()
             for idx, artifact in enumerate(artifacts, 1):
+                # Extract nested valuation data
+                valuation = artifact.get('valuation', {})
+                estimated_value = valuation.get('estimated_value', artifact.get('estimated_value', 0))
+                confidence_score = valuation.get('confidence_score', artifact.get('confidence_score', 0))
+
                 writer.writerow({
                     'index': idx,
                     'title': artifact.get('title', ''),
                     'type': artifact.get('type', ''),
                     'category': artifact.get('verified_category', artifact.get('category', '')),
                     'url': artifact.get('url', ''),
-                    'estimated_value': artifact.get('estimated_value', 0),
-                    'confidence_score': artifact.get('confidence_score', 0),
-                    'year_verified': artifact.get('year_verified', ''),
+                    'estimated_value': estimated_value,
+                    'confidence_score': confidence_score,
+                    'year_verified': artifact.get('date', artifact.get('year_verified', '')),
                     'description': artifact.get('description', ''),
-                    'citation_count': len(artifact.get('sources', []))
+                    'citation_count': len(artifact.get('sources', artifact.get('citations', [])))
                 })
 
     def _generate_markdown(self, report: Dict[str, Any], output_path: str):
@@ -422,9 +433,14 @@ class ReportCompiler:
         md += "\n## Top 10 Artifacts\n\n"
 
         for idx, artifact in enumerate(artifacts[:10], 1):
+            # Extract nested valuation data
+            valuation = artifact.get('valuation', {})
+            estimated_value = valuation.get('estimated_value', artifact.get('estimated_value', 0))
+            confidence_score = valuation.get('confidence_score', artifact.get('confidence_score', 0))
+
             md += f"{idx}. **{artifact.get('title', 'Unknown')}** ({artifact.get('type', 'N/A')})\n"
-            md += f"   - Estimated Value: ${artifact.get('estimated_value', 0):,}\n"
-            md += f"   - Confidence: {artifact.get('confidence_score', 0):.2f}\n"
+            md += f"   - Estimated Value: ${estimated_value:,}\n"
+            md += f"   - Confidence: {confidence_score:.2f}\n"
             md += f"   - URL: {artifact.get('url', 'N/A')}\n\n"
 
         md += "\n## Methodology\n\n"
