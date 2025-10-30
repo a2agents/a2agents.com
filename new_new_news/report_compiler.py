@@ -81,14 +81,25 @@ class ReportCompiler:
         return output_files
 
     def _generate_html(self, report: Dict[str, Any]) -> str:
-        """Generate professional HTML report"""
+        """Generate professional HTML report with narrative elements"""
 
         metadata = report.get('metadata', {})
         artifacts = report.get('artifacts', [])
-        summary = report.get('executive_summary', {})
 
-        # Categorize artifacts
-        categorized = self._categorize_artifacts(artifacts)
+        # Get narrative components (new Gemini-style data)
+        narrative_summary = report.get('executive_summary', {})
+        categories_data = report.get('categories', [])
+        insights_data = report.get('insights', {})
+
+        # Legacy summary for backwards compatibility
+        legacy_summary = report.get('summary', {})
+        summary = narrative_summary if narrative_summary else legacy_summary
+
+        # Use narrative categories if available, otherwise fall back to basic categorization
+        if categories_data:
+            categorized = self._organize_by_narrative_categories(artifacts, categories_data)
+        else:
+            categorized = self._categorize_artifacts(artifacts)
 
         html = f"""<!DOCTYPE html>
 <html lang="en">
@@ -283,27 +294,75 @@ class ReportCompiler:
 
             <div class="stats">
                 <div class="stat-box">
-                    <div class="stat-value">{summary.get('total_artifacts_found', len(artifacts))}</div>
+                    <div class="stat-value">{len(artifacts)}</div>
                     <div class="stat-label">Artifacts</div>
                 </div>
                 <div class="stat-box">
-                    <div class="stat-value">${summary.get('total_estimated_value', 0):,}</div>
+                    <div class="stat-value">${sum(a.get('valuation', {}).get('estimated_value', 0) for a in artifacts):,}</div>
                     <div class="stat-label">Total Value</div>
                 </div>
                 <div class="stat-box">
-                    <div class="stat-value">{summary.get('average_confidence_score', 0):.2f}</div>
+                    <div class="stat-value">{(sum(a.get('valuation', {}).get('confidence_score', 0) for a in artifacts) / len(artifacts) if artifacts else 0):.2f}</div>
                     <div class="stat-label">Avg Confidence</div>
                 </div>
             </div>
+"""
 
+        # Add narrative summary if available
+        if narrative_summary and narrative_summary.get('narrative'):
+            narrative_text = narrative_summary.get('narrative', '')
+            html += f"""
+            <div style="margin-top: 30px;">
+                <h3>Overview</h3>
+                <p style="line-height: 1.8; margin-top: 15px;">{narrative_text}</p>
+            </div>
+"""
+
+        # Add key patterns if available
+        key_patterns = narrative_summary.get('key_patterns', []) if narrative_summary else []
+        if key_patterns:
+            html += """
+            <h3 style="margin-top: 30px; margin-bottom: 15px;">Key Patterns</h3>
+            <ul class="key-findings">
+"""
+            for pattern in key_patterns:
+                html += f"                <li>{pattern}</li>\n"
+            html += """            </ul>
+"""
+        # Legacy key findings (fallback)
+        elif summary.get('key_findings'):
+            html += """
             <h3 style="margin-top: 30px; margin-bottom: 15px;">Key Findings</h3>
             <ul class="key-findings">
 """
+            for finding in summary.get('key_findings', []):
+                html += f"                <li>{finding}</li>\n"
+            html += """            </ul>
+"""
 
-        for finding in summary.get('key_findings', []):
-            html += f"                <li>{finding}</li>\n"
+        html += """        </div>
+"""
 
-        html += """            </ul>
+        # Add insights section if available
+        if insights_data and insights_data.get('insights'):
+            html += """
+        <div class="exec-summary" style="background: #fff3cd; border-left-color: #ffc107;">
+            <h2>Non-Obvious Insights</h2>
+            <ul class="key-findings">
+"""
+            for insight in insights_data.get('insights', []):
+                insight_text = insight.get('insight', '')
+                insight_type = insight.get('type', 'general')
+                evidence = insight.get('evidence', '')
+                html += f"""                <li>
+                    <strong>[{insight_type}]</strong> {insight_text}
+"""
+                if evidence:
+                    html += f"""                    <br><em style="color: #666; font-size: 0.9em;">Evidence: {evidence}</em>
+"""
+                html += """                </li>
+"""
+            html += """            </ul>
         </div>
 """
 
@@ -324,6 +383,10 @@ class ReportCompiler:
                 confidence_score = valuation.get('confidence_score', artifact.get('confidence_score', 0))
                 year = artifact.get('date', artifact.get('year_verified', 'N/A'))
 
+                # Check if this is an enriched artifact (has profile data)
+                profile = artifact.get('profile', {})
+                has_profile = bool(profile.get('description') or profile.get('producer_teams'))
+
                 html += f"""
             <div class="artifact">
                 <div class="artifact-title">{idx}. {artifact.get('title', 'Unknown')}</div>
@@ -342,11 +405,41 @@ class ReportCompiler:
                         <span class="meta-label">Year:</span> {year}
                     </div>
                 </div>
+"""
 
+                # Display enriched 4-field profile if available
+                if has_profile:
+                    html += """
+                <div style="margin: 20px 0; padding: 15px; background: #f0f8ff; border-radius: 5px;">
+"""
+                    if profile.get('description'):
+                        html += f"""
+                    <p style="margin-bottom: 10px;"><strong>Description:</strong> {profile.get('description')}</p>
+"""
+                    if profile.get('producer_teams'):
+                        html += f"""
+                    <p style="margin-bottom: 10px;"><strong>Producer Teams:</strong> {profile.get('producer_teams')}</p>
+"""
+                    if profile.get('client_context'):
+                        html += f"""
+                    <p style="margin-bottom: 10px;"><strong>Client Context:</strong> {profile.get('client_context')}</p>
+"""
+                    if profile.get('significance'):
+                        html += f"""
+                    <p style="margin-bottom: 0;"><strong>Significance ({year}):</strong> {profile.get('significance')}</p>
+"""
+                    html += """
+                </div>
+"""
+                else:
+                    # Legacy description display
+                    html += f"""
                 <div class="artifact-description">
                     {artifact.get('description', 'No description available.')}
                 </div>
+"""
 
+                html += f"""
                 <div style="margin-top: 15px;">
                     <strong>Source:</strong>
                     <a href="{artifact.get('url', '#')}" class="artifact-url" target="_blank">
@@ -474,8 +567,42 @@ class ReportCompiler:
         with open(output_path, 'w', encoding='utf-8') as f:
             json.dump(metadata_output, f, indent=2)
 
+    def _organize_by_narrative_categories(self, artifacts: List[Dict[str, Any]], categories_data: List[Dict]) -> Dict[str, List]:
+        """
+        Organize artifacts using narrative categories from CategorizerAgent
+
+        Args:
+            artifacts: List of enriched artifacts
+            categories_data: List of category dicts from CategorizerAgent
+
+        Returns:
+            Dict mapping category names to lists of artifacts
+        """
+        organized = {}
+
+        # Sort categories by total_value descending (most valuable first)
+        sorted_categories = sorted(
+            categories_data,
+            key=lambda c: c.get('total_value', 0),
+            reverse=True
+        )
+
+        for category in sorted_categories:
+            cat_name = category.get('name', 'Unknown Category')
+            artifact_indices = category.get('artifact_indices', [])
+
+            # Get artifacts by index
+            cat_artifacts = []
+            for idx in artifact_indices:
+                if 0 <= idx < len(artifacts):
+                    cat_artifacts.append(artifacts[idx])
+
+            organized[cat_name] = cat_artifacts
+
+        return organized
+
     def _categorize_artifacts(self, artifacts: List[Dict[str, Any]]) -> Dict[str, List[Dict[str, Any]]]:
-        """Categorize artifacts for organized display"""
+        """Categorize artifacts for organized display (legacy fallback)"""
 
         categories = {
             "Healthcare": [],
