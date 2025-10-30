@@ -12,6 +12,7 @@ from .report_composer import ReportComposerAgent
 from .query_decomposer import QueryDecomposerAgent
 from .deep_verifier import DeepVerifierAgent
 from .artifact_enricher import ArtifactEnricherAgent
+from .categorizer import CategorizerAgent
 
 __all__ = [
     "BaseAgent",
@@ -22,5 +23,6 @@ __all__ = [
     "ReportComposerAgent",
     "QueryDecomposerAgent",
     "DeepVerifierAgent",
-    "ArtifactEnricherAgent"
+    "ArtifactEnricherAgent",
+    "CategorizerAgent"
 ]
