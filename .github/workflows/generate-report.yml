@@ -55,10 +55,16 @@ jobs:
             --no-mock
         fi
 
-    - name: Upload results
+    - name: Upload PDF Report
       uses: actions/upload-artifact@v4
       with:
-        name: research-report
+        name: research-report-pdf
+        path: new_new_news/research_report.pdf
+
+    - name: Upload Full Report Package
+      uses: actions/upload-artifact@v4
+      with:
+        name: research-report-complete
         path: |
           new_new_news/research_report.json
           new_new_news/research_report.html
