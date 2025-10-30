@@ -14,6 +14,7 @@ from .deep_verifier import DeepVerifierAgent
 from .artifact_enricher import ArtifactEnricherAgent
 from .categorizer import CategorizerAgent
 from .summary_generator import SummaryGeneratorAgent
+from .insights_generator import InsightsGeneratorAgent
 
 __all__ = [
     "BaseAgent",
@@ -26,5 +27,6 @@ __all__ = [
     "DeepVerifierAgent",
     "ArtifactEnricherAgent",
     "CategorizerAgent",
-    "SummaryGeneratorAgent"
+    "SummaryGeneratorAgent",
+    "InsightsGeneratorAgent"
 ]
