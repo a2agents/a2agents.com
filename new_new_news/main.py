@@ -215,6 +215,14 @@ class NewNewNewsSystem:
 
     def save_report(self, result: Dict[str, Any], filename: str, compile_full_report: bool = False):
         """Save research report to file"""
+        # DEBUG: Check what's in result before saving
+        print(f"\n[DEBUG] Saving report with keys: {list(result['report'].keys())}")
+        if 'categories' in result['report']:
+            print(f"[DEBUG]   - categories: {len(result['report']['categories'])} categories")
+        if 'insights' in result['report']:
+            print(f"[DEBUG]   - insights: {len(result['report']['insights'].get('insights', []))} insights")
+        print(f"[DEBUG]   - executive_summary type: {type(result['report']['executive_summary'])}")
+
         # Save JSON report
         json_filename = filename.replace(".json", "") + ".json"
         with open(json_filename, 'w') as f:
@@ -491,8 +499,18 @@ class NewNewNewsSystem:
 
         # Add narrative components to final result
         final_result["report"]["categories"] = artifact_categories
-        final_result["report"]["executive_summary"] = exec_summary
+
+        # MERGE narrative summary into existing executive_summary (don't replace!)
+        final_result["report"]["executive_summary"].update(exec_summary)
+
         final_result["report"]["insights"] = insights_result
+
+        # DEBUG: Verify narrative components were added
+        print(f"\n[DEBUG] Narrative components added to report:")
+        print(f"  - Categories: {len(artifact_categories)} categories")
+        print(f"  - Executive Summary keys: {list(final_result['report']['executive_summary'].keys())}")
+        print(f"  - Insights: {len(insights_result.get('insights', []))} insights")
+        print(f"  - Report keys after adding: {list(final_result['report'].keys())}")
 
         end_time = datetime.now()
         duration = (end_time - start_time).total_seconds()
