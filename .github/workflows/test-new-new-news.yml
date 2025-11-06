@@ -29,6 +29,9 @@ on:
     paths:
       - 'new_new_news/**'
 
+permissions:
+  contents: read
+
 jobs:
   test:
     runs-on: ubuntu-latest
