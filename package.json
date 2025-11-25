@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "npx tailwindcss -i ./src/css/input.css -o ./dist/styles.css --watch",
     "build": "npx tailwindcss -i ./src/css/input.css -o ./dist/styles.css --minify && npm run copy-assets",
-    "copy-assets": "cp -r src/*.html src/robots.txt dist/ 2>/dev/null && cp -r src/js dist/ && mkdir -p dist/assets && cp -r assets/* dist/assets/ 2>/dev/null || true",
+    "copy-assets": "cp -r src/*.html src/robots.txt src/CNAME dist/ 2>/dev/null && cp -r src/js dist/ && mkdir -p dist/assets && cp -r assets/* dist/assets/ 2>/dev/null || true",
     "serve": "npx serve dist"
   },
   "devDependencies": {
