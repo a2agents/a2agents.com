@@ -61,7 +61,7 @@ Deployment is **automatic** via GitHub Actions:
    - Builds Tailwind CSS (minified)
    - Copies all assets to `dist/`
    - Deploys to GitHub Pages
-4. Site updates live at https://a2agents.com in ~2-3 minutes
+4. Site updates live at https://a2agents.com and https://a2agents.github.io/a2agents.com/
 
 ### Manual Deployment
 If you need to trigger deployment manually:
