@@ -1,6 +1,6 @@
-# A2Agents Website
+# Agent to Agents Website
 
-Official website for A2Agents consulting practice - Human Excellence meets AI Transformation.
+Official website for Agent to Agents consulting practice - Human First AI-Native Transformation.
 
 ## 🚀 Tech Stack
 
