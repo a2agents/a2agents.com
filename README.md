@@ -186,7 +186,7 @@ Target metrics:
 
 ## 📄 License
 
-© 2024 A2Agents. All rights reserved.
+© 2026 A2Agents. All rights reserved.
 
 ## 🤝 Contributing
 
