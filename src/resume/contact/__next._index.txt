@@ -1,0 +1,11 @@
+1:"$Sreact.fragment"
+2:I[78580,["/resume/_next/static/chunks/069adc13b7c9921a.js"],"ThemeProvider"]
+3:I[22016,["/resume/_next/static/chunks/069adc13b7c9921a.js"],""]
+4:I[58629,["/resume/_next/static/chunks/069adc13b7c9921a.js"],"default"]
+5:"$Sreact.view_transition"
+6:I[39756,["/resume/_next/static/chunks/ff1a16fafef87110.js","/resume/_next/static/chunks/d2be314c3ece3fbe.js"],"default"]
+7:I[37457,["/resume/_next/static/chunks/ff1a16fafef87110.js","/resume/_next/static/chunks/d2be314c3ece3fbe.js"],"default"]
+8:I[36768,["/resume/_next/static/chunks/069adc13b7c9921a.js","/resume/_next/static/chunks/38c583a472c41d0b.js"],"default"]
+9:I[2355,["/resume/_next/static/chunks/069adc13b7c9921a.js"],"Analytics"]
+:HL["/resume/_next/static/chunks/5dd096ca45af7a17.css","style"]
+0:{"buildId":"2Klc20VN5mjRbORp-vDTW","rsc":["$","$1","c",{"children":[[["$","link","0",{"rel":"stylesheet","href":"/resume/_next/static/chunks/5dd096ca45af7a17.css","precedence":"next"}],["$","script","script-0",{"src":"/resume/_next/static/chunks/069adc13b7c9921a.js","async":true}]],["$","html",null,{"lang":"en","className":"space_grotesk_f8d09aa0-module__8-C3Kq__className dark","children":["$","body",null,{"children":["$","$L2",null,{"children":["$","div",null,{"className":"max-w-3xl mx-auto w-full px-4 sm:px-6 lg:px-8","children":[["$","header",null,{"className":"flex justify-between items-center py-4","children":[["$","$L3",null,{"href":"/","className":"text-2xl items-center h-16 my-auto flex font-bold","children":[["$","span",null,{"className":"sm:hidden","children":"KS"}],["$","span",null,{"className":"hidden sm:inline","children":"Kevin Selhi"}]]}],["$","$L4",null,{}]]}],["$","$5",null,{"name":"main-content","children":["$","main",null,{"children":[["$","$L6",null,{"parallelRouterKey":"children","template":["$","$L7",null,{}],"notFound":[["$","$L8",null,{}],[]]}],["$","$L9",null,{}]]}]}],["$","footer",null,{"className":"py-4 mt-8","children":["$","div",null,{"className":"flex flex-col sm:flex-row items-center","children":[["$","p",null,{"className":"mb-2 sm:mb-0 sm:mr-auto text-center sm:text-left","children":["Kevin Selhi",", ",2026,"."]}],["$","a",null,{"href":"mailto:kevin.selhi@gmail.com","className":"mt-2 sm:mt-0 nav-link","children":"kevin.selhi@gmail.com"}]]}]}]]}]}]}]}]]}],"loading":null,"isPartial":false}
