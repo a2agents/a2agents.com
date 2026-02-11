@@ -1,9 +1,0 @@
-# *
-User-agent: *
-Allow: /
-
-# Host
-Host: https://kevinselhi.com
-
-# Sitemaps
-Sitemap: https://kevinselhi.com/sitemap.xml
