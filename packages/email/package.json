@@ -1,0 +1,17 @@
+{
+  "name": "@a2agents/email",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "scripts": {
+    "build": "echo 'email package stub'",
+    "lint": "echo 'no lint configured for email'",
+    "test": "echo 'no tests configured for email'",
+    "typecheck": "tsc --project tsconfig.json --noEmit"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.2"
+  }
+}

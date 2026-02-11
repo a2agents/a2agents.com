@@ -1,0 +1,19 @@
+{
+  "name": "email_ingest",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "tsc --project tsconfig.json --noEmit",
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "lint": "echo 'no lint configured for email_ingest'",
+    "test": "echo 'no tests configured for email_ingest'",
+    "typecheck": "tsc --project tsconfig.json --noEmit"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20260129.0",
+    "typescript": "^5.9.2",
+    "wrangler": "^4.49.0"
+  }
+}

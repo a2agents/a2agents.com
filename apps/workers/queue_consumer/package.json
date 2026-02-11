@@ -1,0 +1,11 @@
+{
+  "name": "queue_consumer",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "build": "echo 'queue_consumer stub'",
+    "lint": "echo 'queue_consumer stub'",
+    "test": "echo 'queue_consumer stub'",
+    "typecheck": "echo 'queue_consumer stub'"
+  }
+}
