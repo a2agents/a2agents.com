@@ -6,9 +6,56 @@ document.addEventListener('DOMContentLoaded', () => {
   initContactForm();
   initSmoothScroll();
   initDetailsAnimations();
+  initIntakeTransition();
+  initStickyBookingCta();
   // Temporarily disable scroll animations causing content to disappear
   // initScrollAnimations();
 });
+
+function initIntakeTransition() {
+  const links = document.querySelectorAll('a[data-intake-cta]');
+  if (!links.length) return;
+
+  links.forEach((link) => {
+    link.addEventListener('click', (event) => {
+      const href = link.getAttribute('href');
+      if (!href) return;
+      event.preventDefault();
+
+      if (typeof document.startViewTransition === 'function') {
+        document.startViewTransition(() => {
+          window.location.assign(href);
+        });
+        return;
+      }
+
+      document.body.classList.add('page-transition-out');
+      setTimeout(() => {
+        window.location.assign(href);
+      }, 160);
+    });
+  });
+}
+
+function initStickyBookingCta() {
+  const stickyCta = document.getElementById('sticky-booking-cta');
+  if (!stickyCta) return;
+
+  const shouldShowStickyCta = () => {
+    const pageOffset = window.scrollY || window.pageYOffset || 0;
+    const viewportHeight = window.innerHeight || 0;
+    const pageHeight = document.documentElement.scrollHeight || 0;
+    const nearFooter = pageOffset + viewportHeight >= pageHeight - 240;
+    const show = pageOffset > 280 && !nearFooter;
+
+    stickyCta.classList.toggle('is-visible', show);
+    stickyCta.setAttribute('aria-hidden', show ? 'false' : 'true');
+  };
+
+  shouldShowStickyCta();
+  window.addEventListener('scroll', shouldShowStickyCta, { passive: true });
+  window.addEventListener('resize', shouldShowStickyCta);
+}
 
 // Contact form handling
 function initContactForm() {

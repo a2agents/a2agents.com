@@ -20,6 +20,50 @@
 
   <!-- Contact Section Styles -->
   <style>
+    .sticky-booking-cta {
+        position: fixed;
+        right: 16px;
+        bottom: 16px;
+        z-index: 60;
+        opacity: 0;
+        transform: translateY(16px);
+        pointer-events: none;
+        transition: opacity 200ms ease, transform 200ms ease;
+    }
+
+    .sticky-booking-cta.is-visible {
+        opacity: 1;
+        transform: translateY(0);
+        pointer-events: auto;
+    }
+
+    .sticky-booking-cta a {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 52px;
+        padding: 12px 18px;
+        border-radius: 9999px;
+        background: #A66B5C;
+        color: #FFFFFF;
+        font-weight: 600;
+        font-size: 16px;
+        text-decoration: none;
+        box-shadow: 0 16px 36px rgba(93, 58, 46, 0.28);
+    }
+
+    .sticky-booking-cta a:hover {
+        background: #8F5B4D;
+    }
+
+    .sticky-booking-cta .cta-copy {
+        display: block;
+        font-size: 11px;
+        font-weight: 500;
+        opacity: 0.9;
+        margin-left: 8px;
+    }
+
     .contact-section {
         background-color: #F5F1EB;
         display: flex;
@@ -99,6 +143,19 @@
 
     /* Responsive Design */
     @media (max-width: 768px) {
+        .sticky-booking-cta {
+            left: 12px;
+            right: 12px;
+            bottom: 12px;
+        }
+
+        .sticky-booking-cta a {
+            width: 100%;
+            border-radius: 12px;
+            justify-content: center;
+            font-size: 15px;
+        }
+
         .contact-section h1 {
             font-size: 42px;
         }
@@ -144,6 +201,17 @@
   </style>
 </head>
 <body class="font-sans text-gray-900 bg-warm-50">
+  <div id="sticky-booking-cta" class="sticky-booking-cta" aria-hidden="true">
+    <a
+      href="https://calendar.app.google/hEthvkLHVEHGzByz9?utm_source=homepage&utm_medium=sticky_cta&utm_campaign=book_intro_call"
+      target="_blank"
+      rel="noopener noreferrer"
+      data-booking-cta
+    >
+      Book Intro Call
+      <span class="cta-copy">30 min</span>
+    </a>
+  </div>
 
   <!-- HERO SECTION -->
   <section class="min-h-screen flex items-center justify-center px-4 bg-gradient-to-br from-warm-50 to-secondary-50">
@@ -162,8 +230,14 @@
       <p class="text-2xl md:text-3xl mb-12 text-secondary-700 font-light">
         We make teams more capable
       </p>      
-      <a href="#contact" class="inline-block px-10 py-5 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-all duration-200 transform hover:-translate-y-1 shadow-warm hover:shadow-warm-lg font-medium text-lg">
-        Let's Talk
+      <a
+        href="https://calendar.app.google/hEthvkLHVEHGzByz9?utm_source=homepage&utm_medium=hero_cta&utm_campaign=book_intro_call"
+        target="_blank"
+        rel="noopener noreferrer"
+        data-booking-cta
+        class="inline-block px-10 py-5 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-all duration-200 transform hover:-translate-y-1 shadow-warm hover:shadow-warm-lg font-medium text-lg"
+      >
+        Book Intro Call
       </a>
     </div>
   </section>
@@ -488,9 +562,22 @@
   <section id="contact" class="contact-section">
     <h1>Book a 30 minute call</h1>
     <p class="subtitle">Every transformation starts with a conversation</p>
-    <a href="https://calendar.app.google/hEthvkLHVEHGzByz9" class="cta-button">Let's Talk</a>
+    <a
+      href="https://calendar.app.google/hEthvkLHVEHGzByz9?utm_source=homepage&utm_medium=footer_cta&utm_campaign=book_intro_call"
+      target="_blank"
+      rel="noopener noreferrer"
+      data-booking-cta
+      class="cta-button"
+    >
+      Book Intro Call
+    </a>
     <p class="referral-note">New clients accepted only via referral</p>
-    <a href="https://calendar.app.google/hEthvkLHVEHGzByz9"><img src="assets/kevin-headshot.png" alt="Kevin" class="headshot"></a>
+    <a
+      href="https://calendar.app.google/hEthvkLHVEHGzByz9?utm_source=homepage&utm_medium=headshot_cta&utm_campaign=book_intro_call"
+      target="_blank"
+      rel="noopener noreferrer"
+      data-booking-cta
+    ><img src="assets/kevin-headshot.png" alt="Kevin" class="headshot"></a>
   </section>
 
   <!-- Footer -->
