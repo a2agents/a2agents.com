@@ -1,6 +1,7 @@
 #!/bin/bash
+set -euo pipefail
 
-API_KEY='ydc-sk-ee8bd1fdc14d83e4-jrMlR51eNr6VYBou1o9KX7UBSy1nWosS-be4e9be7<__>1SJLaUETU8N2v5f4XPe6NHD5'
+API_KEY="${YOU_API_KEY:?Set YOU_API_KEY before running this script}"
 
 echo "=== Testing /search endpoint ==="
 curl -s -X GET 'https://api.ydc-index.io/search?query=COVID%20vaccine&num_web_results=2' \

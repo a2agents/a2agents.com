@@ -3,7 +3,6 @@
 
 document.addEventListener('DOMContentLoaded', () => {
   // Initialize all components
-  initContactForm();
   initSmoothScroll();
   initDetailsAnimations();
   initIntakeTransition();
@@ -55,70 +54,6 @@ function initStickyBookingCta() {
   shouldShowStickyCta();
   window.addEventListener('scroll', shouldShowStickyCta, { passive: true });
   window.addEventListener('resize', shouldShowStickyCta);
-}
-
-// Contact form handling
-function initContactForm() {
-  const form = document.getElementById('contact-form');
-  if (!form) return;
-
-  form.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    
-    // Get form data
-    const formData = new FormData(form);
-    const data = Object.fromEntries(formData);
-    
-    // Get the submit button for state management
-    const submitBtn = form.querySelector('button[type="submit"]');
-    const originalText = submitBtn.textContent;
-    
-    // Update button state
-    submitBtn.disabled = true;
-    submitBtn.textContent = 'Sending...';
-    submitBtn.classList.add('opacity-75');
-    
-    try {
-      // TODO: Phase 2+ - Implement actual form submission
-      // For now, just log and show success
-      console.log('Form submission data:', data);
-      
-      // Simulate API call delay
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
-      // Show success state
-      submitBtn.textContent = '✓ Message Sent!';
-      submitBtn.classList.remove('bg-primary-600', 'hover:bg-primary-700');
-      submitBtn.classList.add('bg-green-600');
-      
-      // Reset form
-      form.reset();
-      
-      // Reset button after delay
-      setTimeout(() => {
-        submitBtn.disabled = false;
-        submitBtn.textContent = originalText;
-        submitBtn.classList.remove('opacity-75', 'bg-green-600');
-        submitBtn.classList.add('bg-primary-600', 'hover:bg-primary-700');
-      }, 3000);
-      
-    } catch (error) {
-      console.error('Form submission error:', error);
-      
-      // Show error state
-      submitBtn.textContent = 'Error - Please try again';
-      submitBtn.classList.remove('bg-primary-600');
-      submitBtn.classList.add('bg-red-600');
-      
-      // Reset button after delay
-      setTimeout(() => {
-        submitBtn.disabled = false;
-        submitBtn.textContent = originalText;
-        submitBtn.classList.remove('opacity-75', 'bg-red-600');
-        submitBtn.classList.add('bg-primary-600', 'hover:bg-primary-700');
-      }, 3000);
-    }
-  });
 }
 
 // Smooth scroll enhancement for anchor links

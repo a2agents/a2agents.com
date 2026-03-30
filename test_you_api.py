@@ -7,10 +7,11 @@ for the New New News hackathon project.
 
 import requests
 import json
+import os
 from typing import Dict, Any
 
 # API Configuration
-API_KEY = "ydc-sk-ee8bd1fdc14d83e4-jrMlR51eNr6VYBou1o9KX7UBSy1nWosS-be4e9be71SJLaUETU8N2v5f4XPe6NHD5"
+API_KEY = os.getenv("YOU_API_KEY")
 BASE_URL = "https://api.ydc-index.io"
 
 # Test query related to 2020 professional artifacts
@@ -216,6 +217,9 @@ def save_results(results: Dict[str, Any], filename: str):
 
 def main():
     """Run all API tests"""
+    if not API_KEY:
+        raise RuntimeError("Set YOU_API_KEY before running this script")
+
     print("\n" + "="*80)
     print("YOU.COM API ENDPOINT TESTER")
     print("Testing capabilities for New New News hackathon project")

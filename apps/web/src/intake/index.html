@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="A2Agents intake chat">
+  <title>Intake | A2Agents</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body class="min-h-screen bg-white text-gray-900">
+  <main class="section-container py-6 md:py-10">
+    <a href="/" class="text-sm text-secondary-700 hover:text-primary-800">← Back</a>
+
+    <section class="mt-4 max-w-4xl">
+      <h1 class="text-3xl md:text-4xl font-serif font-bold text-primary-900">What brought you here?</h1>
+    </section>
+
+    <section id="booking" class="mt-5 max-w-4xl">
+      <h2 class="text-xl font-semibold text-primary-900">Book time</h2>
+      <div class="mt-3 overflow-hidden rounded-2xl border border-secondary-200 bg-white">
+        <iframe
+          id="booking-embed"
+          title="Book time with Kevin"
+          src=""
+          class="h-[560px] w-full"
+          loading="lazy"
+          referrerpolicy="strict-origin-when-cross-origin"
+        ></iframe>
+      </div>
+      <p class="mt-2 text-xs text-secondary-700">
+        If the calendar does not load, <a id="booking-link" class="underline" href="#" target="_blank" rel="noopener noreferrer">open booking in a new tab</a>.
+      </p>
+    </section>
+
+    <section class="mt-8 max-w-4xl">
+      <div id="chat-panel" class="p-0">
+        <div class="sticky top-3 z-10 mb-4 bg-white/90 py-2 text-center backdrop-blur">
+          <img
+            src="/assets/kevin-headshot.png"
+            alt="Kevin"
+            class="mx-auto mb-2 h-10 w-10 rounded-full object-cover"
+            width="64"
+            height="64"
+            style="width: 64px; height: 64px;"
+          >
+          <div id="handoff-actions" class="flex justify-center"></div>
+        </div>
+        <div id="chat-messages" class="flex h-[60vh] flex-col gap-3 overflow-y-auto pr-1 pb-24"></div>
+
+        <form id="chat-form" class="sticky bottom-0 mt-4 flex items-center gap-2 rounded-2xl bg-secondary-50 px-3 py-3" autocomplete="off">
+          <input id="chat-input" type="text" class="w-full bg-transparent px-2 py-3 focus:outline-none" placeholder="Type your message" autocomplete="off" autocorrect="off" autocapitalize="sentences" spellcheck="false" required>
+          <button type="submit" class="bg-primary-700 px-4 py-2 text-white hover:bg-primary-800">Send</button>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <script type="module" src="/js/intake.js"></script>
+</body>
+</html>

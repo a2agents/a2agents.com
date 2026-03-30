@@ -4,12 +4,25 @@
   "packageManager": "pnpm@10.14.0",
   "scripts": {
     "dev": "turbo dev",
+    "dev:local": "pnpm --parallel --filter web --filter slack_app run dev",
     "build": "turbo build",
     "lint": "turbo lint",
     "test": "turbo test",
     "typecheck": "turbo typecheck",
-    "worker:deploy": "pnpm --filter email_ingest deploy",
-    "worker:dev": "pnpm --filter email_ingest dev"
+    "worker:deploy": "pnpm --filter email_ingest run deploy",
+    "worker:deploy:slack-app": "pnpm --filter slack_app run deploy",
+    "worker:deploy:queue-consumer": "pnpm --filter queue_consumer run deploy",
+    "worker:dev": "pnpm --filter email_ingest run dev",
+    "worker:dev:slack-app": "pnpm --filter slack_app run dev",
+    "worker:dev:queue-consumer": "pnpm --filter queue_consumer run dev",
+    "worker:secret:slack-bot": "pnpm --filter email_ingest exec wrangler secret put SLACK_BOT_TOKEN",
+    "worker:secret:slack-bot:slack-app": "pnpm --filter slack_app exec wrangler secret put SLACK_BOT_TOKEN",
+    "worker:secret:slack-bot:queue-consumer": "pnpm --filter queue_consumer exec wrangler secret put SLACK_BOT_TOKEN",
+    "worker:secret:slack-signing": "pnpm --filter slack_app exec wrangler secret put SLACK_SIGNING_SECRET",
+    "worker:secret:openai": "pnpm --filter queue_consumer exec wrangler secret put OPENAI_API_KEY",
+    "worker:secret:postmark": "pnpm --filter queue_consumer exec wrangler secret put POSTMARK_SERVER_TOKEN",
+    "db:migrate": "pnpm --filter email_ingest exec wrangler d1 execute a2agents-comms --file ../../../infra/cloudflare/schema.sql",
+    "db:migrate:slack-operator": "pnpm --filter email_ingest exec -- wrangler d1 execute a2agents-comms --remote --file /Users/benjaminbergstein/src/a2agents.com/infra/cloudflare/migrations/0003_slack_operator.sql"
   },
   "devDependencies": {
     "turbo": "^2.5.6",

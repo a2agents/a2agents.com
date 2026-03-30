@@ -1,18 +1,18 @@
 {
-  "name": "queue_consumer",
+  "name": "slack_app",
   "version": "0.1.0",
   "private": true,
   "type": "module",
+  "dependencies": {
+    "@langchain/core": "^0.3.50"
+  },
   "scripts": {
     "build": "tsc --project tsconfig.json --noEmit",
     "dev": "wrangler dev",
     "deploy": "wrangler deploy",
-    "lint": "echo 'no lint configured for queue_consumer'",
-    "test": "echo 'no tests configured for queue_consumer'",
+    "lint": "echo 'no lint configured for slack_app'",
+    "test": "node test/no-content-persistence.test.mjs && node --test --experimental-strip-types test/state-router.test.ts test/intake-flow.test.ts",
     "typecheck": "tsc --project tsconfig.json --noEmit"
-  },
-  "dependencies": {
-    "@a2agents/email-sender": "workspace:*"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20260129.0",

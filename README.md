@@ -1,8 +1,8 @@
 # a2agents Monorepo
 
-This repository now contains the website plus Cloudflare Worker services for inbound email processing.
+Monorepo for the website and Cloudflare-based Slack Mailbot workers.
 
-## Monorepo Layout
+## Layout
 
 ```text
 a2agents/
@@ -10,20 +10,17 @@ a2agents/
     web/
     workers/
       email_ingest/
-      slack_actions/
+      slack_app/
       queue_consumer/
   packages/
     shared/
     email/
+    email-sender/
   infra/
     cloudflare/
+      schema.sql
+      migrations/
 ```
-
-## Prerequisites
-
-- Node.js 20+
-- pnpm 10+
-- Cloudflare account with `a2agents.com` zone
 
 ## Install
 
@@ -31,52 +28,51 @@ a2agents/
 pnpm install
 ```
 
-## Run Website
+## Website
 
 ```bash
 pnpm --filter web dev
-```
-
-Build website:
-
-```bash
 pnpm --filter web build
 ```
 
-## Worker: Email Ingest MVP
+## Slack Mailbot v1
 
-The MVP Worker receives routed email events and posts short messages to Slack.
+### Workers
 
-Set Slack secret:
+- `email_ingest`: inbound email -> R2 + D1 + Slack thread anchor
+- `slack_app`: Slack interactions/events -> queue jobs
+- `queue_consumer`: draft/send jobs -> OpenAI + outbound email + Slack status
 
-```bash
-pnpm --filter email_ingest exec wrangler secret put SLACK_WEBHOOK_URL
-```
-
-Deploy Worker:
-
-```bash
-pnpm --filter email_ingest deploy
-```
-
-Equivalent root shortcut:
+### Deploy
 
 ```bash
 pnpm worker:deploy
+pnpm worker:deploy:slack-app
+pnpm worker:deploy:queue-consumer
 ```
 
-Full Cloudflare setup instructions are in `infra/cloudflare/EMAIL_MVP.md`.
+### Set Secrets
 
-## Root Scripts
+```bash
+pnpm worker:secret:slack-bot
+pnpm worker:secret:slack-bot:slack-app
+pnpm worker:secret:slack-bot:queue-consumer
+pnpm worker:secret:slack-signing
+pnpm worker:secret:openai
+pnpm worker:secret:postmark
+```
 
-- `pnpm dev` -> `turbo dev`
-- `pnpm build` -> `turbo build`
-- `pnpm lint` -> `turbo lint`
-- `pnpm test` -> `turbo test`
-- `pnpm typecheck` -> `turbo typecheck`
-- `pnpm worker:deploy` -> deploy `apps/workers/email_ingest`
-- `pnpm worker:dev` -> run worker locally
+Set the same `SLACK_BOT_TOKEN` for all three workers, and set `OUTBOUND_EMAIL_FROM` as a Wrangler variable on `queue_consumer`.
 
-## Next MVP Phase
+## Cloudflare Setup Docs
 
-Planned follow-up work is tracked in `MVP_NEXT.md`.
+- `infra/cloudflare/EMAIL_MVP.md`
+- `infra/cloudflare/SLACK_APP_SETUP.md`
+- `infra/cloudflare/OUTBOUND_EMAIL_SETUP.md`
+
+## Database Schema
+
+- `infra/cloudflare/schema.sql`
+- `infra/cloudflare/migrations/0001_init.sql`
+
+Apply migration with Wrangler D1 before deploying workers that use D1.

@@ -5,8 +5,9 @@ Simple You.com API Test - Testing different endpoint variations
 
 import requests
 import json
+import os
 
-API_KEY = "ydc-sk-ee8bd1fdc14d83e4-jrMlR51eNr6VYBou1o9KX7UBSy1nWosS-be4e9be71SJLaUETU8N2v5f4XPe6NHD5"
+API_KEY = os.getenv("YOU_API_KEY")
 
 # Test different endpoint variations
 endpoints_to_test = [
@@ -26,6 +27,9 @@ headers = {
 test_query = "COVID-19 vaccine development 2020"
 
 print("Testing You.com API Endpoints\n" + "="*80)
+
+if not API_KEY:
+    raise RuntimeError("Set YOU_API_KEY before running this script")
 
 for endpoint in endpoints_to_test:
     print(f"\n🔍 Testing: {endpoint}")

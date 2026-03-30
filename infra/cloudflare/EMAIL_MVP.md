@@ -1,46 +1,59 @@
-# Email to Slack MVP (Cloudflare Email Routing + Worker)
+# Email -> Slack Mailbot v1
 
-## Goal
-Route `info@a2agents.com` inbound mail through Cloudflare Email Routing into Worker `a2agents-email-ingest`, then post a short notification into Slack channel `#project-mailbox`.
+## Flow
 
-## Prerequisites
-- Cloudflare zone for `a2agents.com` is active.
-- Email Routing is enabled for the zone.
-- Slack Incoming Webhook URL created for `#project-mailbox`.
+1. Cloudflare Email Routing sends inbound `info@a2agents.com` mail to Worker `a2agents-email-ingest`.
+2. `email_ingest` stores raw `.eml` in R2, metadata in D1, and posts a thread anchor in Slack.
+3. Slack button clicks hit `a2agents-slack-app`, which enqueues jobs.
+4. `a2agents-queue-consumer` generates drafts and sends approved replies.
 
-## Configure Email Routing
-1. Open Cloudflare Dashboard for `a2agents.com`.
-2. Go to `Email` -> `Email Routing`.
-3. Add/verify destination address if prompted.
-4. Create route:
+## Required Cloudflare Resources
+
+- D1 database: `a2agents-comms`
+- R2 bucket: `a2agents-comms-archive`
+- Queue: `comms-jobs`
+
+## Apply D1 Schema
+
+```bash
+pnpm --filter email_ingest exec wrangler d1 execute a2agents-comms --file ../../../infra/cloudflare/schema.sql
+```
+
+## Email Routing
+
+1. Cloudflare Dashboard -> `Email` -> `Email Routing`.
+2. Create/verify route:
    - Custom address: `info`
    - Action: `Send to Worker`
    - Worker: `a2agents-email-ingest`
 
-## Set Worker secret
-Run from repo root:
+## Worker Secrets
+
+Set these before deploy:
 
 ```bash
-pnpm --filter email_ingest exec wrangler secret put SLACK_WEBHOOK_URL
+pnpm db:migrate
+pnpm worker:secret:slack-bot
+pnpm worker:secret:slack-bot:slack-app
+pnpm worker:secret:slack-bot:queue-consumer
+pnpm worker:secret:slack-signing
+pnpm worker:secret:openai
+pnpm worker:secret:postmark
 ```
 
-Paste the Slack Incoming Webhook URL when prompted.
+Also set `SLACK_BOT_TOKEN` on `queue_consumer` (same token used by ingest/slack app).
 
-## Deploy
-```bash
-pnpm --filter email_ingest deploy
-```
-
-Or via root helper:
+## Deploy Workers
 
 ```bash
 pnpm worker:deploy
+pnpm worker:deploy:slack-app
+pnpm worker:deploy:queue-consumer
 ```
 
-## Test
-1. Send an email to `info@a2agents.com`.
-2. Confirm Slack receives one short message in `#project-mailbox` containing `From`, `To`, `Subject`, and a short snippet.
+## Validate
 
-## Notes
-- Current Worker is fast-path only (no queueing, no LLM, no drafting).
-- Message dedupe is not persisted yet. Add KV/R2-based dedupe in a later phase.
+1. Send email to `info@a2agents.com`.
+2. Confirm Slack message appears in `#project-mailbox` with buttons.
+3. Click `Draft reply` and confirm draft appears in thread.
+4. Click `Send` and confirm outbound message is sent once.

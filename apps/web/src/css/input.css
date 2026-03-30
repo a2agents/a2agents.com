@@ -11,6 +11,7 @@
   body {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    transition: opacity 160ms ease, transform 160ms ease;
   }
 }
 
@@ -62,5 +63,10 @@
   /* Smooth scroll padding for fixed header */
   .scroll-mt-20 {
     scroll-margin-top: 5rem;
+  }
+
+  .page-transition-out {
+    opacity: 0;
+    transform: translateY(6px);
   }
 }
