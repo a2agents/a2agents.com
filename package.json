@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "turbo dev",
     "dev:local": "pnpm --parallel --filter web --filter slack_app run dev",
-    "build": "turbo build",
+    "build": "pnpm --filter web run build && cp -r apps/web/dist dist",
     "lint": "turbo lint",
     "test": "turbo test",
     "typecheck": "turbo typecheck",
