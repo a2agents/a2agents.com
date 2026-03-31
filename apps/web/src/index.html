@@ -70,7 +70,7 @@
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        padding: 60px 20px;
+        padding: 48px 20px 56px;
         text-align: center;
     }
 
@@ -92,21 +92,22 @@
 
     .cta-button {
         display: inline-block;
-        background-color: #A66B5C;
+        background-color: #874131;
         color: white;
-        font-size: 22px;
-        font-weight: 500;
-        padding: 20px 60px;
-        border-radius: 12px;
+        font-size: 20px;
+        font-weight: 600;
+        padding: 18px 56px;
+        border-radius: 9999px;
         text-decoration: none;
         transition: all 0.3s ease;
         margin-bottom: 40px;
+        box-shadow: 0 8px 24px rgba(93, 58, 46, 0.25);
     }
 
     .cta-button:hover {
-        background-color: #8F5B4D;
+        background-color: #70372d;
         transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(166, 107, 92, 0.3);
+        box-shadow: 0 12px 32px rgba(93, 58, 46, 0.35);
     }
 
     .referral-note {
@@ -133,12 +134,10 @@
 
     .contact-section .headshot {
         display: block;
-        margin: 30px auto 0;
-        width: 80px;
-        height: 80px;
+        margin: 0 auto;
         border-radius: 50%;
         object-fit: cover;
-        border: 3px solid rgba(255, 255, 255, 0.2);
+        border: 3px solid rgba(93, 58, 46, 0.15);
     }
 
     /* Responsive Design */
@@ -216,119 +215,124 @@
   <!-- HERO SECTION -->
   <section class="min-h-screen flex items-center justify-center px-4 bg-gradient-to-br from-warm-50 to-secondary-50">
     <div class="max-w-4xl mx-auto text-center animate-fade-in">
-      <h1 class="text-5xl md:text-7xl font-serif font-bold mb-6 text-primary-900">
-        a 
-        <br>Human 
-        <br>Layer 
-        <br>in the 
+      <h1 class="text-5xl md:text-7xl font-serif font-bold text-primary-900" style="line-height: 1.15;">
+        a
+        <br>Human
+        <br>Layer
+        <br>in the
         <br>AI era
-          </br>
       </h1>
-      <p class="text-2xl md:text-3xl mb-12 text-secondary-700 font-light">
-        <br>Agent to Agents
-      </p> 
-      <p class="text-2xl md:text-3xl mb-12 text-secondary-700 font-light">
+      <p class="text-lg md:text-xl mt-8 mb-3 text-secondary-500 font-medium tracking-widest uppercase">
+        Agent to Agents
+      </p>
+      <p class="text-xl md:text-2xl mb-14 text-secondary-700 font-light">
         We make teams more capable
-      </p>      
+      </p>
       <a
         href="https://calendar.app.google/hEthvkLHVEHGzByz9?utm_source=homepage&utm_medium=hero_cta&utm_campaign=book_intro_call"
         target="_blank"
         rel="noopener noreferrer"
         data-booking-cta
-        class="inline-block px-10 py-5 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-all duration-200 transform hover:-translate-y-1 shadow-warm hover:shadow-warm-lg font-medium text-lg"
+        class="inline-block px-12 py-4 bg-primary-700 text-white rounded-full hover:bg-primary-800 transition-all duration-200 transform hover:-translate-y-1 font-semibold text-lg"
+        style="box-shadow: 0 8px 24px rgba(93, 58, 46, 0.25);"
       >
-        Book Intro Call
+        Let's Talk
       </a>
     </div>
   </section>
   <!-- THE PROBLEM -->
-  <section class="py-24 md:py-32 px-4 bg-white">
-    <div class="max-w-3xl mx-auto">
-      <div class="max-w-none">
-        <h2 class="text-3xl md:text-4xl font-serif text-primary-900 mb-8 text-right">
-          We make (human) 
-          <br>organizations more
-          <br>(super) human (e)
-        </h2>
-        <div class="space-y-6 text-gray-700 leading-relaxed">
-          <p class="text-xl">
-            Not through strategy decks
-            <br>Not through software deployments
-
-          </p>
-          <p class="text-xl">
-            Through embedded partnership <br>with the people who matter most
-            <ul style="text-align: right;"><ul>
-              <li>your client-facing leaders</li>
-              <li>transformation managers</li>
-              <li>front-line knowledge workers</li>
-              <li>at the intersection of human
-                <br>judgment and reliable automation</li>
-              </ul>
+  <section class="py-16 md:py-24 px-4 bg-white">
+    <div class="max-w-4xl mx-auto">
+      <div class="grid md:grid-cols-2 gap-12 lg:gap-16 items-center">
+        <!-- Left column -->
+        <div>
+          <h2 class="text-3xl md:text-4xl font-serif text-primary-900 mb-6" style="line-height: 1.2;">
+            We make (human)
+            <br>organizations more
+            <br>(super) human (e)
+          </h2>
+          <div class="space-y-4 text-gray-600 leading-relaxed">
+            <p class="text-lg">
+              Not through strategy decks.
+              <br>Not through software deployments.
+            </p>
+            <p class="text-lg">
+              Through embedded partnership
+              <br>with the people who matter most.
+            </p>
+          </div>
+        </div>
+        <!-- Right column -->
+        <div class="space-y-8 pt-2">
+          <div>
+            <h3 class="text-sm font-medium tracking-widest uppercase text-secondary-500 mb-3">Who we work with</h3>
+            <ul class="space-y-2 text-gray-700">
+              <li class="flex items-start"><span class="text-primary-400 mr-2">—</span>Client-facing leaders</li>
+              <li class="flex items-start"><span class="text-primary-400 mr-2">—</span>Transformation managers</li>
+              <li class="flex items-start"><span class="text-primary-400 mr-2">—</span>Front-line knowledge workers</li>
             </ul>
-
-          </p>
-          <p class="text-xl">
-            We work with a select group
-            <ul style="text-align: right;"><ul>
-             <li>technologists building the boldest innovations</li>
-             <li>researchers tackling the hardest problems</li>
-             <li>financial firms managing the biggest risks</li>
-           </ul> </ul>
-          </p>
+          </div>
+          <div>
+            <h3 class="text-sm font-medium tracking-widest uppercase text-secondary-500 mb-3">Industries</h3>
+            <ul class="space-y-2 text-gray-700">
+              <li class="flex items-start"><span class="text-primary-400 mr-2">—</span>Technologists building the boldest innovations</li>
+              <li class="flex items-start"><span class="text-primary-400 mr-2">—</span>Researchers tackling the hardest problems</li>
+              <li class="flex items-start"><span class="text-primary-400 mr-2">—</span>Financial firms managing the biggest risks</li>
+            </ul>
+          </div>
         </div>
       </div>
     </div>
   </section>
-  <!-- WHAT WE DO (VISUALIZATION PLACEHOLDER) -->
-  <section class="py-24 md:py-32 px-4 bg-gradient-to-b from-secondary-50 to-warm-50">
+  <!-- WHAT WE DO -->
+  <section class="py-16 md:py-24 px-4 bg-secondary-50">
     <div class="max-w-6xl mx-auto">
-      <h2 class="text-4xl md:text-5xl font-serif font-bold text-center mb-16 text-primary-900">
+      <h2 class="text-3xl md:text-4xl font-serif font-bold text-center mb-12 text-primary-900">
         What We Do
       </h2>
-      
-      <!-- Phase 3: This div will contain the interactive Obsidian network -->
-      <!-- Phase 1/2: Simple two-column layout -->
+
       <div id="network-visualization" class="grid md:grid-cols-2 gap-8 lg:gap-12">
-        <div class="card shadow-warm transform transition-all duration-300 hover:-translate-y-2 hover:shadow-warm-lg">
+        <div class="bg-white p-8 rounded-xl border border-secondary-200 shadow-warm transform transition-all duration-300 hover:-translate-y-1 hover:shadow-warm-lg">
+          <div class="w-10 h-1 bg-primary-500 rounded mb-6"></div>
           <h3 class="text-2xl font-serif font-bold mb-6 text-primary-800">Human Excellence</h3>
           <ul class="space-y-4">
             <li class="flex items-start">
-              <span class="text-primary-600 mr-3 text-xl">•</span>
-              <span class="text-gray-700">Executive Leadership Development</span>
+              <span class="text-primary-400 mr-3">—</span>
+              <span class="text-gray-600">Executive Leadership Development</span>
             </li>
             <li class="flex items-start">
-              <span class="text-primary-600 mr-3 text-xl">•</span>
-              <span class="text-gray-700">Team Performance Optimization</span>
+              <span class="text-primary-400 mr-3">—</span>
+              <span class="text-gray-600">Team Performance Optimization</span>
             </li>
             <li class="flex items-start">
-              <span class="text-primary-600 mr-3 text-xl">•</span>
-              <span class="text-gray-700">Client Partnership Coaching</span>
+              <span class="text-primary-400 mr-3">—</span>
+              <span class="text-gray-600">Client Partnership Coaching</span>
             </li>
             <li class="flex items-start">
-              <span class="text-primary-600 mr-3 text-xl">•</span>
-              <span class="text-gray-700">Communications & Influence</span>
+              <span class="text-primary-400 mr-3">—</span>
+              <span class="text-gray-600">Communications & Influence</span>
             </li>
           </ul>
         </div>
-        <div class="card shadow-warm transform transition-all duration-300 hover:-translate-y-2 hover:shadow-warm-lg">
+        <div class="bg-white p-8 rounded-xl border border-secondary-200 shadow-warm transform transition-all duration-300 hover:-translate-y-1 hover:shadow-warm-lg">
+          <div class="w-10 h-1 bg-warm-500 rounded mb-6"></div>
           <h3 class="text-2xl font-serif font-bold mb-6 text-primary-800">AI Transformation</h3>
           <ul class="space-y-4">
             <li class="flex items-start">
-              <span class="text-primary-600 mr-3 text-xl">•</span>
-              <span class="text-gray-700">AI Tool Selection & Implementation</span>
+              <span class="text-primary-400 mr-3">—</span>
+              <span class="text-gray-600">AI Tool Selection & Implementation</span>
             </li>
             <li class="flex items-start">
-              <span class="text-primary-600 mr-3 text-xl">•</span>
-              <span class="text-gray-700">Workflow Automation Strategy</span>
+              <span class="text-primary-400 mr-3">—</span>
+              <span class="text-gray-600">Workflow Automation Strategy</span>
             </li>
             <li class="flex items-start">
-              <span class="text-primary-600 mr-3 text-xl">•</span>
-              <span class="text-gray-700">Team AI Adoption Programs</span>
+              <span class="text-primary-400 mr-3">—</span>
+              <span class="text-gray-600">Team AI Adoption Programs</span>
             </li>
             <li class="flex items-start">
-              <span class="text-primary-600 mr-3 text-xl">•</span>
-              <span class="text-gray-700">AI-Human Collaboration Design</span>
+              <span class="text-primary-400 mr-3">—</span>
+              <span class="text-gray-600">AI-Human Collaboration Design</span>
             </li>
           </ul>
         </div>
@@ -337,17 +341,17 @@
   </section>
 
   <!-- SERVICE DETAILS -->
-  <section class="py-24 md:py-32 px-4 bg-white">
+  <section class="py-16 md:py-24 px-4 bg-white">
     <div class="max-w-4xl mx-auto">
-      <h2 class="text-4xl md:text-5xl font-serif font-bold text-center mb-16 text-primary-900">
+      <h2 class="text-3xl md:text-4xl font-serif font-bold text-center mb-10 text-primary-900">
         How We Help
       </h2>
-      <div class="space-y-6">
+      <div class="space-y-4">
         <!-- Human Excellence Coaching -->
-        <details class="card group cursor-pointer">
-          <summary class="text-2xl font-serif font-bold text-primary-800 flex justify-between items-center">
+        <details class="bg-white p-6 rounded-xl border border-secondary-200 hover:border-secondary-300 transition-colors duration-200 group cursor-pointer">
+          <summary class="text-xl font-serif font-bold text-primary-800 flex justify-between items-center">
             Human Excellence Coaching
-            <span class="text-3xl text-primary-600 group-open:rotate-45 transition-transform duration-200">+</span>
+            <span class="text-2xl text-primary-400 group-open:rotate-45 transition-transform duration-200">+</span>
           </summary>
           <div class="mt-6 max-w-none">
             <p class="text-gray-700 leading-relaxed">
@@ -363,10 +367,10 @@
         </details>
 
         <!-- AI Transformation -->
-        <details class="card group cursor-pointer">
-          <summary class="text-2xl font-serif font-bold text-primary-800 flex justify-between items-center">
+        <details class="bg-white p-6 rounded-xl border border-secondary-200 hover:border-secondary-300 transition-colors duration-200 group cursor-pointer">
+          <summary class="text-xl font-serif font-bold text-primary-800 flex justify-between items-center">
             AI Transformation
-            <span class="text-3xl text-primary-600 group-open:rotate-45 transition-transform duration-200">+</span>
+            <span class="text-2xl text-primary-400 group-open:rotate-45 transition-transform duration-200">+</span>
           </summary>
           <div class="mt-6 max-w-none">
             <p class="text-gray-700 leading-relaxed">
@@ -382,10 +386,10 @@
         </details>
 
         <!-- Combined Approach -->
-        <details class="card group cursor-pointer">
-          <summary class="text-2xl font-serif font-bold text-primary-800 flex justify-between items-center">
+        <details class="bg-white p-6 rounded-xl border border-secondary-200 hover:border-secondary-300 transition-colors duration-200 group cursor-pointer">
+          <summary class="text-xl font-serif font-bold text-primary-800 flex justify-between items-center">
             The Integrated Approach
-            <span class="text-3xl text-primary-600 group-open:rotate-45 transition-transform duration-200">+</span>
+            <span class="text-2xl text-primary-400 group-open:rotate-45 transition-transform duration-200">+</span>
           </summary>
           <div class="mt-6 max-w-none">
             <p class="text-gray-700 leading-relaxed">
@@ -403,22 +407,23 @@
   </section>
 
   <!-- WHY BOTH? -->
-  <section class="py-24 md:py-32 px-4 bg-gradient-to-r from-primary-50 to-secondary-50">
+  <section class="py-16 md:py-24 px-4 bg-warm-50">
     <div class="max-w-3xl mx-auto text-center">
-      <h2 class="text-4xl md:text-5xl font-serif font-bold mb-8 text-primary-900">
+      <h2 class="text-3xl md:text-4xl font-serif font-bold mb-10 text-primary-900">
         Why Both?
       </h2>
       <div class="space-y-6">
-        <p class="text-xl text-gray-700 leading-relaxed">
+        <p class="text-xl text-gray-600 leading-relaxed">
           Companies that excel at either human leadership or AI adoption alone are leaving the future on the table.
         </p>
-        <p class="text-xl text-gray-700 leading-relaxed">
-          When teams combine deep human connection with AI-powered productivity, they don't just perform better - they redefine what's possible in their industries.
+        <p class="text-xl text-gray-600 leading-relaxed">
+          When teams combine deep human connection with AI-powered productivity, they don't just perform better — they redefine what's possible in their industries.
         </p>
-        <blockquote class="mt-12 p-8 bg-white rounded-lg shadow-warm border-l-4 border-primary-600">
-          <p class="text-lg italic text-gray-700">
-            "My team accomplished what would have taken two quarters in two weeks. We could not have done it without Agent to Agents." - Senior PM, Google
+        <blockquote class="mt-12 p-8 bg-white rounded-xl shadow-warm border-l-4 border-primary-400">
+          <p class="text-lg italic text-gray-600 leading-relaxed">
+            "My team accomplished what would have taken two quarters in two weeks. We could not have done it without Agent to Agents."
           </p>
+          <cite class="block mt-4 text-sm font-medium text-secondary-500 not-italic">— Senior PM, Google</cite>
         </blockquote>
       </div>
     </div>
@@ -493,22 +498,22 @@
   -->
 
   <!-- FEATURED CONTENT -->
-  <section class="py-24 md:py-32 px-4 bg-secondary-50">
+  <section class="py-16 md:py-24 px-4 bg-white">
     <div class="max-w-4xl mx-auto">
-      <h2 class="text-3xl md:text-4xl font-serif font-bold mb-12 text-primary-900">
+      <h2 class="text-sm font-medium tracking-widest uppercase text-secondary-500 mb-8">
         Field Notes
       </h2>
-      <div class="card shadow-warm-lg">
+      <div class="bg-warm-50 p-8 md:p-10 rounded-xl border border-secondary-200">
         <article class="max-w-none">
-          <h3 class="text-2xl font-serif text-primary-800">
+          <h3 class="text-2xl font-serif font-bold text-primary-800 mb-6">
             When Economists Meet AI: Why We Need Rigorous Thinking at the Frontier
           </h3>
-          <div class="space-y-4 text-gray-700">
-            <p>At a moment when the world's superpowers are racing toward superintelligence and GPUs convert electricity into intelligence, we need our greatest minds to engage seriously with AI—not offer surface-level commentary.</p>
+          <div class="space-y-4 text-gray-600 leading-relaxed">
+            <p>At a moment when the world's superpowers are racing toward superintelligence and GPUs convert electricity into intelligence, we need our greatest minds to engage seriously with AI — not offer surface-level commentary.</p>
             <p>ChatGPT reached 40% of American adults in under 2 years. LLM performance on coding benchmarks jumped from under 10% to 85% in just 18 months. AI models now pass professional certifications. DeepSeek proved frontier performance doesn't require US-level compute, upending assumptions behind export controls.</p>
             <p>The question isn't whether AI will transform knowledge work. It's how we adapt when one superhuman-in-the-loop can do the work of 1000 knowledge workers.</p>
           </div>
-          <a href="https://kevinselhi.com/post/789905256338292736/part-of-the-problem-is-the-extraordinary-place" class="inline-flex items-center mt-6 text-primary-600 hover:text-primary-700 transition-colors" target="_blank" rel="noopener noreferrer">
+          <a href="https://kevinselhi.com/post/789905256338292736/part-of-the-problem-is-the-extraordinary-place" class="inline-flex items-center mt-6 text-primary-600 hover:text-primary-700 font-medium transition-colors" target="_blank" rel="noopener noreferrer">
             Read more →
           </a>
         </article>
@@ -517,41 +522,31 @@
   </section>
 
   <!-- HOW WE WORK -->
-  <section class="py-24 md:py-32 px-4 bg-white">
-    <div class="max-w-3xl mx-auto text-center">
-      <h2 class="text-3xl md:text-4xl font-serif font-bold mb-12 text-primary-900">
+  <section class="py-16 md:py-24 px-4 bg-gradient-to-b from-secondary-100 to-secondary-50">
+    <div class="max-w-5xl mx-auto">
+      <h2 class="text-3xl md:text-4xl font-serif font-bold text-center mb-12 text-primary-900">
         How We Work
       </h2>
-      <div class="mx-auto text-left">
-        <div class="space-y-6">
-          <div class="flex items-start">
-            <span class="text-3xl text-primary-600 mr-4 font-serif">1.</span>
-            <div>
-              <h3 class="text-xl font-bold text-primary-800 mb-2">Discovery</h3>
-              <p class="text-gray-700">Starting with a 30-minute discovery call, we document your team's challenges, dynamics, and goals through in-depth interviews and assessments.</p>
-            </div>
-          </div>
-          <div class="flex items-start">
-            <span class="text-3xl text-primary-600 mr-4 font-serif">2.</span>
-            <div>
-              <h3 class="text-xl font-bold text-primary-800 mb-2">Strategy</h3>
-              <p class="text-gray-700">Together, we design a customized roadmap balancing quick wins with long-term transformation, guided by a philosophy of self-directed evolution, intentional management, and regenerative growth.</p>
-            </div>
-          </div>
-          <div class="flex items-start">
-            <span class="text-3xl text-primary-600 mr-4 font-serif">3.</span>
-            <div>
-              <h3 class="text-xl font-bold text-primary-800 mb-2">Implementation</h3>
-              <p class="text-gray-700">We work alongside your team, providing hands-on coaching and technical guidance to ensure smooth adoption and sustainable change. Inspiring curiosity, confidence, and connection.</p>
-            </div>
-          </div>
-          <div class="flex items-start">
-            <span class="text-3xl text-primary-600 mr-4 font-serif">4.</span>
-            <div>
-              <h3 class="text-xl font-bold text-primary-800 mb-2">Community</h3>
-              <p class="text-gray-700">Through continuous feedback and iteration, we refine both human processes and AI systems to maximize impact and maintain momentum. But this is built on a foundation of strong relationships and enduring community.</p>
-            </div>
-          </div>
+      <div class="grid md:grid-cols-2 gap-8 lg:gap-10">
+        <div class="bg-white p-8 rounded-xl border border-secondary-200">
+          <span class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-primary-100 text-primary-700 font-serif font-bold text-lg mb-5">1</span>
+          <h3 class="text-xl font-bold text-primary-800 mb-3">Discovery</h3>
+          <p class="text-gray-600 leading-relaxed">Starting with a 30-minute discovery call, we document your team's challenges, dynamics, and goals through in-depth interviews and assessments.</p>
+        </div>
+        <div class="bg-white p-8 rounded-xl border border-secondary-200">
+          <span class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-primary-100 text-primary-700 font-serif font-bold text-lg mb-5">2</span>
+          <h3 class="text-xl font-bold text-primary-800 mb-3">Strategy</h3>
+          <p class="text-gray-600 leading-relaxed">Together, we design a customized roadmap balancing quick wins with long-term transformation, guided by a philosophy of self-directed evolution, intentional management, and regenerative growth.</p>
+        </div>
+        <div class="bg-white p-8 rounded-xl border border-secondary-200">
+          <span class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-primary-100 text-primary-700 font-serif font-bold text-lg mb-5">3</span>
+          <h3 class="text-xl font-bold text-primary-800 mb-3">Implementation</h3>
+          <p class="text-gray-600 leading-relaxed">We work alongside your team, providing hands-on coaching and technical guidance to ensure smooth adoption and sustainable change. Inspiring curiosity, confidence, and connection.</p>
+        </div>
+        <div class="bg-white p-8 rounded-xl border border-secondary-200">
+          <span class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-primary-100 text-primary-700 font-serif font-bold text-lg mb-5">4</span>
+          <h3 class="text-xl font-bold text-primary-800 mb-3">Community</h3>
+          <p class="text-gray-600 leading-relaxed">Through continuous feedback and iteration, we refine both human processes and AI systems to maximize impact and maintain momentum. Built on a foundation of strong relationships and enduring community.</p>
         </div>
       </div>
     </div>
@@ -560,6 +555,12 @@
   <!-- CONTACT -->
 
   <section id="contact" class="contact-section">
+    <a
+      href="https://calendar.app.google/hEthvkLHVEHGzByz9?utm_source=homepage&utm_medium=headshot_cta&utm_campaign=book_intro_call"
+      target="_blank"
+      rel="noopener noreferrer"
+      data-booking-cta
+    ><img src="assets/kevin-headshot.png" alt="Kevin" class="headshot" style="width:100px; height:100px; margin-bottom:24px;"></a>
     <h1>Book a 30 minute call</h1>
     <p class="subtitle">Every transformation starts with a conversation</p>
     <a
@@ -569,15 +570,9 @@
       data-booking-cta
       class="cta-button"
     >
-      Book Intro Call
+      Let's Talk
     </a>
     <p class="referral-note">New clients accepted only via referral</p>
-    <a
-      href="https://calendar.app.google/hEthvkLHVEHGzByz9?utm_source=homepage&utm_medium=headshot_cta&utm_campaign=book_intro_call"
-      target="_blank"
-      rel="noopener noreferrer"
-      data-booking-cta
-    ><img src="assets/kevin-headshot.png" alt="Kevin" class="headshot"></a>
   </section>
 
   <!-- Footer -->
