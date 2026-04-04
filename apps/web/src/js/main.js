@@ -146,21 +146,63 @@ function debounce(func, wait) {
   };
 }
 
-// Add parallax effect to hero section (subtle)
+// Parallax and scroll-driven animations
 function initParallax() {
+  const sections = document.querySelectorAll('section');
   const hero = document.querySelector('section:first-of-type');
-  if (!hero) return;
-  
-  const handleScroll = debounce(() => {
-    const scrolled = window.pageYOffset;
-    const rate = scrolled * -0.5;
-    
-    if (Math.abs(rate) < window.innerHeight) {
-      hero.style.transform = `translateY(${rate}px)`;
-    }
-  }, 10);
-  
-  window.addEventListener('scroll', handleScroll);
+  const heroContent = hero ? hero.querySelector('div') : null;
+
+  // Elements that fade/slide in on scroll
+  const revealEls = document.querySelectorAll(
+    '.grid > div, details, blockquote, article, .contact-section > *, .contact-section .headshot'
+  );
+  revealEls.forEach(el => {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(32px)';
+    el.style.transition = 'opacity 0.6s ease-out, transform 0.6s ease-out';
+  });
+
+  // Section headings parallax — they move slightly slower than scroll
+  const headings = document.querySelectorAll('section h2');
+
+  let ticking = false;
+  function onScroll() {
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(() => {
+      const scrollY = window.scrollY;
+      const vh = window.innerHeight;
+
+      // Hero: content fades out and drifts up as you scroll past
+      if (heroContent) {
+        const progress = Math.min(scrollY / (vh * 0.6), 1);
+        heroContent.style.opacity = 1 - progress;
+        heroContent.style.transform = `translateY(${scrollY * -0.3}px)`;
+      }
+
+      // Section headings: subtle parallax drift
+      headings.forEach(h => {
+        const rect = h.getBoundingClientRect();
+        const center = rect.top + rect.height / 2;
+        const offset = (center - vh / 2) * 0.06;
+        h.style.transform = `translateY(${offset}px)`;
+      });
+
+      // Reveal elements when they enter viewport
+      revealEls.forEach(el => {
+        const rect = el.getBoundingClientRect();
+        if (rect.top < vh * 0.88) {
+          el.style.opacity = '1';
+          el.style.transform = 'translateY(0)';
+        }
+      });
+
+      ticking = false;
+    });
+  }
+
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll(); // initial check
 }
 
 // Initialize parallax if user prefers reduced motion is not set
