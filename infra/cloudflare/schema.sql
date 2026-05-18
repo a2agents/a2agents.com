@@ -150,3 +150,28 @@ CREATE TABLE IF NOT EXISTS intake_sessions (
 );
 
 CREATE INDEX IF NOT EXISTS idx_intake_updated_ts ON intake_sessions(updated_ts);
+
+-- Fleet-wide trace table: the nervous system
+CREATE TABLE IF NOT EXISTS traces (
+  id TEXT PRIMARY KEY,
+  ts INTEGER NOT NULL,
+  name TEXT NOT NULL,
+  env TEXT NOT NULL,
+  session_id TEXT NOT NULL,
+  agent_id TEXT,
+  parent_trace_id TEXT,
+  tags_json TEXT,
+  payload_json TEXT,
+  duration_ms INTEGER,
+  outcome TEXT,
+  error TEXT
+);
+
+CREATE INDEX IF NOT EXISTS idx_traces_ts ON traces(ts);
+CREATE INDEX IF NOT EXISTS idx_traces_env ON traces(env);
+CREATE INDEX IF NOT EXISTS idx_traces_session ON traces(session_id);
+CREATE INDEX IF NOT EXISTS idx_traces_name ON traces(name);
+CREATE INDEX IF NOT EXISTS idx_traces_parent ON traces(parent_trace_id);
+CREATE INDEX IF NOT EXISTS idx_traces_outcome ON traces(outcome);
+CREATE INDEX IF NOT EXISTS idx_traces_replay ON traces(session_id, ts);
+CREATE INDEX IF NOT EXISTS idx_traces_env_ts ON traces(env, ts);
