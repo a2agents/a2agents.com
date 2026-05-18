@@ -150,3 +150,31 @@ CREATE TABLE IF NOT EXISTS intake_sessions (
 );
 
 CREATE INDEX IF NOT EXISTS idx_intake_updated_ts ON intake_sessions(updated_ts);
+
+-- Learning loop: capture draft lifecycle for fleet-wide improvement
+CREATE TABLE IF NOT EXISTS draft_feedback (
+  id TEXT PRIMARY KEY,
+  draft_id TEXT NOT NULL,
+  message_id TEXT NOT NULL,
+  prompt_hash TEXT,
+  prompt_style TEXT,
+  model TEXT,
+  original_text TEXT NOT NULL,
+  confidence TEXT,
+  outcome TEXT NOT NULL,
+  final_text TEXT,
+  edit_distance INTEGER,
+  human_time_ms INTEGER,
+  user_id TEXT,
+  channel_id TEXT,
+  created_ts INTEGER NOT NULL,
+  resolved_ts INTEGER,
+  FOREIGN KEY(draft_id) REFERENCES drafts(id),
+  FOREIGN KEY(message_id) REFERENCES messages(id)
+);
+
+CREATE INDEX IF NOT EXISTS idx_feedback_outcome ON draft_feedback(outcome);
+CREATE INDEX IF NOT EXISTS idx_feedback_model ON draft_feedback(model);
+CREATE INDEX IF NOT EXISTS idx_feedback_prompt_style ON draft_feedback(prompt_style);
+CREATE INDEX IF NOT EXISTS idx_feedback_created ON draft_feedback(created_ts);
+CREATE INDEX IF NOT EXISTS idx_feedback_channel ON draft_feedback(channel_id);
