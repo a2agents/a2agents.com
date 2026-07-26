@@ -150,16 +150,16 @@ function debounce(func, wait) {
 function initParallax() {
   const hero = document.querySelector('section:first-of-type');
   if (!hero) return;
-  
+
   const handleScroll = debounce(() => {
     const scrolled = window.pageYOffset;
     const rate = scrolled * -0.5;
-    
+
     if (Math.abs(rate) < window.innerHeight) {
       hero.style.transform = `translateY(${rate}px)`;
     }
   }, 10);
-  
+
   window.addEventListener('scroll', handleScroll);
 }
 
