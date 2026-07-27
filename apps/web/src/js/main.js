@@ -163,10 +163,12 @@ function initParallax() {
   window.addEventListener('scroll', handleScroll);
 }
 
-// Initialize parallax if user prefers reduced motion is not set
-if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-  initParallax();
-}
+// Parallax is now handled in CSS via a scroll-driven animation
+// (see .hero-parallax in index.html). The old JS scroll-listener version
+// below is left in place but no longer initialized.
+// if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+//   initParallax();
+// }
 
 // Log that main.js loaded successfully
 console.log('A2Agents site initialized');

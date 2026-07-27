@@ -206,6 +206,27 @@
             font-size: 14px;
         }
     }
+
+    /* --- PROTOTYPE: CSS-only hero parallax via scroll-driven animation --- */
+    /* Runs entirely on the compositor (no scroll listener, no JS). Gated so */
+    /* it only applies where supported; everywhere else the hero is static.  */
+    @media (prefers-reduced-motion: no-preference) {
+      @supports (animation-timeline: scroll()) {
+        .hero-parallax {
+          animation: hero-parallax-drift linear both;
+          animation-timeline: scroll(root block);
+          /* Drive the animation across the first viewport of scrolling. */
+          animation-range: 0 100vh;
+          will-change: transform;
+        }
+
+        @keyframes hero-parallax-drift {
+          from { transform: translateY(0); }
+          /* Matches the old JS rate (scroll * -0.5): -50vh after 100vh scroll. */
+          to   { transform: translateY(-50vh); }
+        }
+      }
+    }
   </style>
 </head>
 <body class="font-sans text-gray-900 bg-warm-50">
@@ -222,7 +243,7 @@
   </div>
 
   <!-- HERO SECTION -->
-  <section class="min-h-screen flex items-center justify-center px-4 bg-gradient-to-br from-warm-50 to-secondary-50">
+  <section class="hero-parallax min-h-screen flex items-center justify-center px-4 bg-gradient-to-br from-warm-50 to-secondary-50">
     <div class="max-w-4xl mx-auto text-center animate-fade-in">
       <h1 class="text-5xl md:text-7xl font-serif font-bold text-primary-900" style="line-height: 1.15;">
         a
