@@ -1,0 +1,25 @@
+{
+  "name": "@a2agents/trace",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./sinks/d1": "./src/sinks/d1.ts",
+    "./sinks/console": "./src/sinks/console.ts",
+    "./sinks/batch": "./src/sinks/batch.ts"
+  },
+  "scripts": {
+    "build": "echo 'trace package has no build step yet'",
+    "lint": "echo 'no lint configured for trace'",
+    "test": "echo 'no tests configured for trace'",
+    "typecheck": "tsc --project tsconfig.json --noEmit"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20260129.0",
+    "@types/node": "^22.0.0",
+    "typescript": "^5.9.2"
+  }
+}
