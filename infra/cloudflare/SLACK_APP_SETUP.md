@@ -1,6 +1,10 @@
 # Slack App Setup for Channel Operator
 
-## Create Slack App
+This document covers the basic single-workspace setup for the A2Agents Slack bot. For multi-workspace and Slack Connect support, see [SLACK_CONNECT_SETUP.md](./SLACK_CONNECT_SETUP.md).
+
+## Single-Workspace Setup
+
+### Create Slack App
 
 1. Go to Slack API -> Your Apps -> Create App.
 2. Add bot token scopes:
