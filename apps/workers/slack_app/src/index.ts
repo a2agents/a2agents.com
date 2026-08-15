@@ -1,4 +1,9 @@
 import { handleChatApiRequest, handleStreamApiRequest, type ChatApiEnv } from "./chat_api.ts";
+import {
+  handleInstallRedirect,
+  handleOAuthCallback,
+  getBotToken
+} from "./oauth.ts";
 
 export type QueueJob = {
   type: "draft_reply" | "send_reply";
@@ -15,6 +20,10 @@ export interface Env extends ChatApiEnv {
   COMMS_JOBS: Queue<QueueJob>;
   SLACK_SIGNING_SECRET: string;
   SLACK_BOT_TOKEN: string;
+  SLACK_CLIENT_ID?: string;
+  SLACK_CLIENT_SECRET?: string;
+  SLACK_REDIRECT_URI?: string;
+  MULTI_WORKSPACE_ENABLED?: string;
   OPENAI_API_KEY?: string;
   OPENAI_API_KEY_SECRET?: { get(): Promise<string> };
   OPENAI_MODEL?: string;
@@ -28,6 +37,7 @@ type SlackEventEnvelope = {
   type: string;
   challenge?: string;
   event_id?: string;
+  team_id?: string;
   event?: {
     type: string;
     user?: string;
@@ -41,6 +51,7 @@ type SlackEventEnvelope = {
 };
 
 type SlackActionPayload = {
+  team?: { id: string };
   user?: { id: string };
   channel?: { id: string };
   container?: { thread_ts?: string };
@@ -839,8 +850,10 @@ async function slackApi(
   env: Env,
   method: string,
   body: Record<string, unknown>,
-  mode: "post" | "get" = "post"
+  mode: "post" | "get" = "post",
+  teamId?: string
 ): Promise<SlackApiResponse> {
+  const token = await getBotToken(env, teamId);
   const url = new URL(`https://slack.com/api/${method}`);
   let init: RequestInit;
 
@@ -853,14 +866,14 @@ async function slackApi(
     init = {
       method: "GET",
       headers: {
-        authorization: `Bearer ${env.SLACK_BOT_TOKEN}`
+        authorization: `Bearer ${token}`
       }
     };
   } else {
     init = {
       method: "POST",
       headers: {
-        authorization: `Bearer ${env.SLACK_BOT_TOKEN}`,
+        authorization: `Bearer ${token}`,
         "content-type": "application/json; charset=utf-8"
       },
       body: JSON.stringify(body)
@@ -911,17 +924,17 @@ async function actionLog(
     .run();
 }
 
-async function postThread(env: Env, channel: string, threadTs: string, text: string): Promise<void> {
+async function postThread(env: Env, channel: string, threadTs: string, text: string, teamId?: string): Promise<void> {
   await slackApi(env, "chat.postMessage", {
     channel,
     thread_ts: threadTs,
     text
-  });
+  }, "post", teamId);
 }
 
-async function getChannelInfo(env: Env, channelId: string): Promise<ChannelContext> {
+async function getChannelInfo(env: Env, channelId: string, teamId?: string): Promise<ChannelContext> {
   try {
-    const json = await slackApi(env, "conversations.info", { channel: channelId });
+    const json = await slackApi(env, "conversations.info", { channel: channelId }, "get", teamId);
     return {
       id: channelId,
       name: json.channel?.name ?? null,
@@ -934,7 +947,7 @@ async function getChannelInfo(env: Env, channelId: string): Promise<ChannelConte
   }
 }
 
-async function readThread(env: Env, channelId: string, rootTs: string, limit = 30): Promise<SlackMessage[]> {
+async function readThread(env: Env, channelId: string, rootTs: string, limit = 30, teamId?: string): Promise<SlackMessage[]> {
   if (!/^\d+\.\d+$/.test(rootTs)) {
     return [];
   }
@@ -948,7 +961,8 @@ async function readThread(env: Env, channelId: string, rootTs: string, limit = 3
         limit,
         inclusive: true
       },
-      "get"
+      "get",
+      teamId
     );
     return json.messages ?? [];
   } catch {
@@ -960,7 +974,8 @@ async function readChannelHistory(
   env: Env,
   channelId: string,
   oldestEpochSeconds: number,
-  limit = 40
+  limit = 40,
+  teamId?: string
 ): Promise<SlackMessage[]> {
   try {
     const json = await slackApi(
@@ -971,7 +986,8 @@ async function readChannelHistory(
         oldest: oldestEpochSeconds,
         limit
       },
-      "get"
+      "get",
+      teamId
     );
     return json.messages ?? [];
   } catch {
@@ -984,14 +1000,15 @@ function isImageFile(file: SlackFile): boolean {
   return mime.startsWith("image/");
 }
 
-async function fetchSlackFileAsBase64(env: Env, file: SlackFile): Promise<{ mimeType: string; dataBase64: string } | null> {
+async function fetchSlackFileAsBase64(env: Env, file: SlackFile, teamId?: string): Promise<{ mimeType: string; dataBase64: string } | null> {
   const fileUrl = file.url_private_download ?? file.url_private;
   if (!fileUrl) {
     return null;
   }
+  const token = await getBotToken(env, teamId);
   const response = await fetch(fileUrl, {
     headers: {
-      authorization: `Bearer ${env.SLACK_BOT_TOKEN}`
+      authorization: `Bearer ${token}`
     }
   });
   if (!response.ok) {
@@ -1154,7 +1171,8 @@ async function maybeProcessConfirmation(
   channelId: string,
   threadTs: string,
   userId: string,
-  userPrompt: string
+  userPrompt: string,
+  teamId?: string
 ): Promise<{ consumed: boolean; message?: string }> {
   if (!/^yes\b/i.test(userPrompt.trim())) {
     return { consumed: false };
@@ -1166,7 +1184,7 @@ async function maybeProcessConfirmation(
   }
 
   const args = parseJsonSafe<Record<string, unknown>>(pending.args_json) ?? {};
-  const result = await executeWriteAction(env, pending.action_name, args, channelId, threadTs, userId, true);
+  const result = await executeWriteAction(env, pending.action_name, args, channelId, threadTs, userId, true, teamId);
   await markConfirmationStatus(env, pending.id, "confirmed");
 
   return {
@@ -1184,17 +1202,18 @@ async function executeToolCall(
     channelId: string;
     rootTs: string;
     userId?: string;
+    teamId?: string;
   }
 ): Promise<ToolResult> {
   try {
     if (tool.name === "get_channel_info") {
-      const info = await getChannelInfo(env, ctx.channelId);
+      const info = await getChannelInfo(env, ctx.channelId, ctx.teamId);
       return { tool: tool.name, ok: true, output: info };
     }
 
     if (tool.name === "read_thread") {
       const limit = Number(tool.args.limit ?? 30);
-      const thread = await readThread(env, ctx.channelId, ctx.rootTs, Number.isFinite(limit) ? limit : 30);
+      const thread = await readThread(env, ctx.channelId, ctx.rootTs, Number.isFinite(limit) ? limit : 30, ctx.teamId);
       return {
         tool: tool.name,
         ok: true,
@@ -1208,7 +1227,7 @@ async function executeToolCall(
     if (tool.name === "read_channel_history") {
       const windowHours = Number(tool.args.window_hours ?? 24);
       const oldest = Math.floor((nowMs() - Math.max(1, windowHours) * 3600 * 1000) / 1000);
-      const messages = await readChannelHistory(env, ctx.channelId, oldest, 40);
+      const messages = await readChannelHistory(env, ctx.channelId, oldest, 40, ctx.teamId);
       return {
         tool: tool.name,
         ok: true,
@@ -1220,7 +1239,7 @@ async function executeToolCall(
     }
 
     if (tool.name === "describe_thread_images") {
-      const thread = await readThread(env, ctx.channelId, ctx.rootTs, 40);
+      const thread = await readThread(env, ctx.channelId, ctx.rootTs, 40, ctx.teamId);
       const images = thread.flatMap((m) => m.files ?? []).filter(isImageFile).slice(0, 4);
       if (images.length === 0) {
         return {
@@ -1231,7 +1250,7 @@ async function executeToolCall(
       }
       const fetched: Array<{ mimeType: string; dataBase64: string }> = [];
       for (const image of images) {
-        const loaded = await fetchSlackFileAsBase64(env, image);
+        const loaded = await fetchSlackFileAsBase64(env, image, ctx.teamId);
         if (loaded) {
           fetched.push(loaded);
         }
@@ -1263,7 +1282,7 @@ async function executeToolCall(
       }
       const emoji = String(tool.args.emoji ?? "eyes");
       const ts = String(tool.args.message_ts ?? ctx.rootTs);
-      await slackApi(env, "reactions.add", { channel: ctx.channelId, timestamp: ts, name: emoji });
+      await slackApi(env, "reactions.add", { channel: ctx.channelId, timestamp: ts, name: emoji }, "post", ctx.teamId);
       return { tool: tool.name, ok: true, output: { emoji, message_ts: ts } };
     }
 
@@ -1273,12 +1292,12 @@ async function executeToolCall(
       }
       const emoji = String(tool.args.emoji ?? "eyes");
       const ts = String(tool.args.message_ts ?? ctx.rootTs);
-      await slackApi(env, "reactions.remove", { channel: ctx.channelId, timestamp: ts, name: emoji });
+      await slackApi(env, "reactions.remove", { channel: ctx.channelId, timestamp: ts, name: emoji }, "post", ctx.teamId);
       return { tool: tool.name, ok: true, output: { emoji, message_ts: ts } };
     }
 
     if (tool.name === "summarize_thread") {
-      const thread = await readThread(env, ctx.channelId, ctx.rootTs, 40);
+      const thread = await readThread(env, ctx.channelId, ctx.rootTs, 40, ctx.teamId);
       const lines = buildThreadLines(thread);
       const summary = await openAIResponses(env, [
         {
@@ -1317,7 +1336,8 @@ async function executeWriteAction(
   channelId: string,
   rootTs: string,
   userId: string,
-  fromConfirmation: boolean
+  fromConfirmation: boolean,
+  teamId?: string
 ): Promise<ToolResult> {
   if (!shouldWriteActionsRun(env)) {
     return { tool: actionName, ok: false, output: {}, error_code: "write_actions_disabled" };
@@ -1329,7 +1349,7 @@ async function executeWriteAction(
       if (!topic) {
         return { tool: actionName, ok: false, output: {}, error_code: "invalid_args" };
       }
-      await slackApi(env, "conversations.setTopic", { channel: channelId, topic });
+      await slackApi(env, "conversations.setTopic", { channel: channelId, topic }, "post", teamId);
       await actionLog(env, {
         channel_id: channelId,
         thread_ts: rootTs,
@@ -1346,7 +1366,7 @@ async function executeWriteAction(
       if (!purpose) {
         return { tool: actionName, ok: false, output: {}, error_code: "invalid_args" };
       }
-      await slackApi(env, "conversations.setPurpose", { channel: channelId, purpose });
+      await slackApi(env, "conversations.setPurpose", { channel: channelId, purpose }, "post", teamId);
       await upsertPolicyPurpose(env, channelId, purpose, userId);
       await actionLog(env, {
         channel_id: channelId,
@@ -1496,6 +1516,7 @@ async function applyPlannerWriteActions(
     userId: string;
     userPrompt: string;
     writeActions: PlannerWriteAction[];
+    teamId?: string;
   }
 ): Promise<ToolResult[]> {
   const results: ToolResult[] = [];
@@ -1518,7 +1539,8 @@ async function applyPlannerWriteActions(
         env,
         args.channelId,
         args.rootTs,
-        `I can apply \`${action.name}\`. Reply \`yes\` in this thread within 10 minutes to confirm.`
+        `I can apply \`${action.name}\`. Reply \`yes\` in this thread within 10 minutes to confirm.`,
+        args.teamId
       );
       results.push({ tool: action.name, ok: false, output: {}, error_code: "confirmation_required" });
       continue;
@@ -1531,7 +1553,8 @@ async function applyPlannerWriteActions(
       args.channelId,
       args.rootTs,
       args.userId,
-      false
+      false,
+      args.teamId
     );
     results.push(result);
   }
@@ -1539,7 +1562,7 @@ async function applyPlannerWriteActions(
   return results;
 }
 
-async function handleMention(env: Env, payload: SlackEventEnvelope["event"]): Promise<void> {
+async function handleMention(env: Env, payload: SlackEventEnvelope["event"], teamId?: string): Promise<void> {
   if (!payload?.channel || !payload.ts) {
     return;
   }
@@ -1550,16 +1573,16 @@ async function handleMention(env: Env, payload: SlackEventEnvelope["event"]): Pr
   const rawText = payload.text ?? "";
   const userPrompt = stripMention(rawText);
 
-  const confirmation = await maybeProcessConfirmation(env, channelId, rootTs, userId, userPrompt);
+  const confirmation = await maybeProcessConfirmation(env, channelId, rootTs, userId, userPrompt, teamId);
   if (confirmation.consumed) {
-    await postThread(env, channelId, rootTs, confirmation.message ?? "Confirmed.");
+    await postThread(env, channelId, rootTs, confirmation.message ?? "Confirmed.", teamId);
     return;
   }
 
-  const threadMessages = await readThread(env, channelId, rootTs, 30);
+  const threadMessages = await readThread(env, channelId, rootTs, 30, teamId);
   const effectivePrompt = inferEffectivePrompt(userPrompt, threadMessages, userId);
   const eventFeatures = extractFeatures(rawText, Boolean(threadMessages.find((m) => (m.files ?? []).length > 0)), Boolean(payload.thread_ts));
-  const channelContext = await getChannelInfo(env, channelId);
+  const channelContext = await getChannelInfo(env, channelId, teamId);
   const policy = await getPolicy(env, channelId);
   const routing = await getRouting(env, channelId);
 
@@ -1576,7 +1599,8 @@ async function handleMention(env: Env, payload: SlackEventEnvelope["event"]): Pr
         channelTopic: channelContext.topic,
         channelPurpose: channelContext.purpose,
         policyPurpose: policy.purpose
-      })
+      }),
+      teamId
     );
     return;
   }
@@ -1587,7 +1611,7 @@ async function handleMention(env: Env, payload: SlackEventEnvelope["event"]): Pr
       recentFacts.length > 0
         ? await generateNovelFactReply(env, userPrompt, recentFacts)
         : await generateDirectFactReply(env, userPrompt);
-    await postThread(env, channelId, rootTs, fact);
+    await postThread(env, channelId, rootTs, fact, teamId);
     return;
   }
 
@@ -1608,22 +1632,24 @@ async function handleMention(env: Env, payload: SlackEventEnvelope["event"]): Pr
         channelId,
         rootTs,
         userId,
-        false
+        false,
+        teamId
       );
       if (write.ok) {
-        await postThread(env, channelId, rootTs, `Updated channel description to: ${draftedPurpose}`);
+        await postThread(env, channelId, rootTs, `Updated channel description to: ${draftedPurpose}`, teamId);
       } else {
         await postThread(
           env,
           channelId,
           rootTs,
-          `I couldn't update the channel description yet (${write.error_code ?? "unknown_error"}). Draft: ${draftedPurpose}`
+          `I couldn't update the channel description yet (${write.error_code ?? "unknown_error"}). Draft: ${draftedPurpose}`,
+          teamId
         );
       }
       return;
     }
 
-    await postThread(env, channelId, rootTs, `Draft channel description: ${draftedPurpose}`);
+    await postThread(env, channelId, rootTs, `Draft channel description: ${draftedPurpose}`, teamId);
     return;
   }
 
@@ -1633,13 +1659,13 @@ async function handleMention(env: Env, payload: SlackEventEnvelope["event"]): Pr
     const imageResult = await executeToolCall(
       env,
       { name: "describe_thread_images", args: { user_prompt: userPrompt }, reason: "user asked about images" },
-      { channelId, rootTs, userId }
+      { channelId, rootTs, userId, teamId }
     );
     const text =
       imageResult.ok && typeof imageResult.output.summary === "string"
         ? imageResult.output.summary
         : "I couldn’t read the image content from this thread yet. Please make sure the files are accessible to the app and try again.";
-    await postThread(env, channelId, rootTs, text);
+    await postThread(env, channelId, rootTs, text, teamId);
     return;
   }
 
@@ -1669,7 +1695,8 @@ async function handleMention(env: Env, payload: SlackEventEnvelope["event"]): Pr
     const result = await executeToolCall(env, toolCall, {
       channelId,
       rootTs,
-      userId
+      userId,
+      teamId
     });
     toolResults.push(result);
   }
@@ -1679,7 +1706,8 @@ async function handleMention(env: Env, payload: SlackEventEnvelope["event"]): Pr
     rootTs,
     userId,
     userPrompt: effectivePrompt,
-    writeActions: normalizedPlan.write_actions.slice(0, 2)
+    writeActions: normalizedPlan.write_actions.slice(0, 2),
+    teamId
   });
   toolResults.push(...writeResults);
 
@@ -1691,7 +1719,7 @@ async function handleMention(env: Env, payload: SlackEventEnvelope["event"]): Pr
       // Keep original reply if rewrite fails.
     }
   }
-  await postThread(env, channelId, rootTs, normalizeHandleMentions(reply, env));
+  await postThread(env, channelId, rootTs, normalizeHandleMentions(reply, env), teamId);
 
   await actionLog(env, {
     channel_id: channelId,
@@ -1721,6 +1749,7 @@ async function handleActions(env: Env, rawBody: string): Promise<Response> {
   const firstAction = payload?.actions?.[0];
   const channelId = payload?.channel?.id;
   const threadTs = payload?.container?.thread_ts ?? payload?.message?.thread_ts ?? payload?.message?.ts;
+  const teamId = payload?.team?.id;
 
   if (!firstAction || !channelId || !threadTs) {
     return new Response("Invalid action payload", { status: 400 });
@@ -1740,14 +1769,14 @@ async function handleActions(env: Env, rawBody: string): Promise<Response> {
       prompt_style: firstAction.action_id === "summarize" ? "summarize" : "default"
     });
 
-    await postThread(env, channelId, threadTs, firstAction.action_id === "summarize" ? "Summarizing..." : "Drafting...");
+    await postThread(env, channelId, threadTs, firstAction.action_id === "summarize" ? "Summarizing..." : "Drafting...", teamId);
     return new Response(JSON.stringify({ response_type: "ephemeral", text: "Queued." }), {
       headers: { "content-type": "application/json" }
     });
   }
 
   if (firstAction.action_id === "send_reply") {
-    await postThread(env, channelId, threadTs, "Send is disabled in draft-only mode.");
+    await postThread(env, channelId, threadTs, "Send is disabled in draft-only mode.", teamId);
     return new Response(JSON.stringify({ response_type: "ephemeral", text: "Send disabled." }), {
       headers: { "content-type": "application/json" }
     });
@@ -1800,7 +1829,7 @@ async function handleEvents(env: Env, rawBody: string): Promise<Response> {
     .bind(idemKey, nowMs(), nowMs() + 24 * 60 * 60 * 1000)
     .run();
 
-  await handleMention(env, payload.event);
+  await handleMention(env, payload.event, payload.team_id);
 
   await env.COMMS_DB.prepare(`UPDATE idempotency_keys SET status = 'done' WHERE key = ?`).bind(idemKey).run();
   return new Response("ok", { status: 200 });
@@ -1809,11 +1838,21 @@ async function handleEvents(env: Env, rawBody: string): Promise<Response> {
 export default {
   async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
     const url = new URL(request.url);
+    
+    // API routes (no auth required)
     if (url.pathname === "/api/chat") {
       return handleChatApiRequest(request, env);
     }
     if (url.pathname === "/api/stream") {
       return handleStreamApiRequest(request, env);
+    }
+
+    // OAuth routes (no POST requirement, no signature verification)
+    if (url.pathname === "/slack/install") {
+      return handleInstallRedirect(env);
+    }
+    if (url.pathname === "/slack/oauth/callback") {
+      return handleOAuthCallback(request, env);
     }
 
     if (request.method !== "POST") {

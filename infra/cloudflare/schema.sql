@@ -150,3 +150,56 @@ CREATE TABLE IF NOT EXISTS intake_sessions (
 );
 
 CREATE INDEX IF NOT EXISTS idx_intake_updated_ts ON intake_sessions(updated_ts);
+
+-- Fleet-wide trace table: the nervous system
+CREATE TABLE IF NOT EXISTS traces (
+  id TEXT PRIMARY KEY,
+  ts INTEGER NOT NULL,
+  name TEXT NOT NULL,
+  env TEXT NOT NULL,
+  session_id TEXT NOT NULL,
+  agent_id TEXT,
+  parent_trace_id TEXT,
+  tags_json TEXT,
+  payload_json TEXT,
+  duration_ms INTEGER,
+  outcome TEXT,
+  error TEXT
+);
+
+CREATE INDEX IF NOT EXISTS idx_traces_ts ON traces(ts);
+CREATE INDEX IF NOT EXISTS idx_traces_env ON traces(env);
+CREATE INDEX IF NOT EXISTS idx_traces_session ON traces(session_id);
+CREATE INDEX IF NOT EXISTS idx_traces_name ON traces(name);
+CREATE INDEX IF NOT EXISTS idx_traces_parent ON traces(parent_trace_id);
+CREATE INDEX IF NOT EXISTS idx_traces_outcome ON traces(outcome);
+CREATE INDEX IF NOT EXISTS idx_traces_replay ON traces(session_id, ts);
+CREATE INDEX IF NOT EXISTS idx_traces_env_ts ON traces(env, ts);
+
+-- Learning loop: capture draft lifecycle for fleet-wide improvement
+CREATE TABLE IF NOT EXISTS draft_feedback (
+  id TEXT PRIMARY KEY,
+  draft_id TEXT NOT NULL,
+  message_id TEXT NOT NULL,
+  prompt_hash TEXT,
+  prompt_style TEXT,
+  model TEXT,
+  original_text TEXT NOT NULL,
+  confidence TEXT,
+  outcome TEXT NOT NULL,
+  final_text TEXT,
+  edit_distance INTEGER,
+  human_time_ms INTEGER,
+  user_id TEXT,
+  channel_id TEXT,
+  created_ts INTEGER NOT NULL,
+  resolved_ts INTEGER,
+  FOREIGN KEY(draft_id) REFERENCES drafts(id),
+  FOREIGN KEY(message_id) REFERENCES messages(id)
+);
+
+CREATE INDEX IF NOT EXISTS idx_feedback_outcome ON draft_feedback(outcome);
+CREATE INDEX IF NOT EXISTS idx_feedback_model ON draft_feedback(model);
+CREATE INDEX IF NOT EXISTS idx_feedback_prompt_style ON draft_feedback(prompt_style);
+CREATE INDEX IF NOT EXISTS idx_feedback_created ON draft_feedback(created_ts);
+CREATE INDEX IF NOT EXISTS idx_feedback_channel ON draft_feedback(channel_id);
