@@ -31,6 +31,13 @@ module.exports = {
           900: '#524038',
           950: '#2b211d',
         },
+        // Alpha-Omega semantic colours: CSS variables from css/alpha-omega.css,
+        // so they follow the Paper / Night Train theme. No opacity modifiers on these.
+        paper: { DEFAULT: 'var(--paper)', raised: 'var(--paper-raised)', sunk: 'var(--paper-sunk)' },
+        ink: { DEFAULT: 'var(--ink)', body: 'var(--ink-body)', muted: 'var(--ink-muted)' },
+        rule: { DEFAULT: 'var(--rule)', strong: 'var(--rule-strong)' },
+        accent: { DEFAULT: 'var(--accent)', hover: 'var(--accent-hover)', on: 'var(--on-accent)' },
+        carbon: 'var(--carbon)',
         warm: {
           50: '#fdfcfb',
           100: '#f9f5f3',
@@ -45,7 +52,10 @@ module.exports = {
           950: '#382419',
         },
       },
+      // Alpha-Omega families come from CSS variables in css/alpha-omega.css.
       fontFamily: {
+        display: ['var(--font-display)'],
+        mono: ['var(--font-mono)'],
         sans: [
           'system-ui',
           '-apple-system',

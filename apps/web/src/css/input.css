@@ -1,3 +1,6 @@
+/* Alpha-Omega tokens + components (generated). Must precede @tailwind. */
+@import "./alpha-omega.css";
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -69,4 +72,26 @@
     opacity: 0;
     transform: translateY(6px);
   }
+}
+
+/* ---------- Alpha-Omega homepage pieces ---------- */
+@layer components {
+  .ao-eyebrow { font-family: var(--font-sans); font-size: 14px; line-height: 20px; font-weight: 500; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-muted); }
+  .ao-dash-list > li { display: flex; align-items: flex-start; gap: var(--space-2); }
+  .ao-dash-list > li::before { content: "—"; color: var(--accent); flex: none; }
+  .ao-band { background: var(--paper); }
+  .ao-band--sunk { background: var(--paper-sunk); }
+  .ao-band--raised { background: var(--paper-raised); }
+  .ao-hairline { border-top: 1px solid var(--rule); }
+  .ao-ant rect { fill: var(--ink); }
+  .ao-ant .ao-ant__agent { fill: var(--accent); }
+  .ao-quote { font-family: var(--font-display); font-style: italic; color: var(--ink); }
+  .ao-link { color: var(--accent); font-weight: 500; text-decoration: none; transition: color 200ms ease; }
+  .ao-link:hover { color: var(--accent-hover); }
+  .ao-link:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; border-radius: var(--radius-sheet); }
+  .ao-route--steps { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .ao-route--steps .ao-route__dot { background: var(--accent); color: var(--on-accent); font-family: var(--font-mono); font-size: 12px; line-height: 24px; font-weight: 500; text-align: center; }
+  .ao-route--steps .ao-route__note { font-size: 16px; line-height: 1.625; }
+  @media (max-width: 720px) { .ao-route--steps { grid-template-columns: 1fr; } }
+  .ao-headshot { display: block; margin: 0 auto; width: 100px; height: 100px; border-radius: var(--radius-full); object-fit: cover; border: 3px solid var(--rule); }
 }

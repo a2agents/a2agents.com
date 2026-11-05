@@ -16,10 +16,11 @@
   <title>Agent to Agents - a Human Layer in the AI era</title>
   <link rel="stylesheet" href="styles.css">
 
-  <!-- Google Fonts -->
+  <!-- Google Fonts (Alpha-Omega: Playfair Display, Inter, IBM Plex Mono) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <meta name="color-scheme" content="light dark">
 
   <!-- Favicon and meta tags -->
   <meta property="og:title" content="Agent to Agents - a Human Layer for the AI era">
@@ -27,185 +28,15 @@
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://a2agents.com">
 
-  <!-- Contact Section Styles -->
+  <!-- Page-only layout. Colours, type and components come from Alpha-Omega (css/alpha-omega.css). -->
   <style>
     .sticky-booking-cta {
-        position: fixed;
-        right: 16px;
-        bottom: 16px;
-        z-index: 60;
-        opacity: 0;
-        transform: translateY(16px);
-        pointer-events: none;
-        transition: opacity 200ms ease, transform 200ms ease;
+      position: fixed; right: 16px; bottom: 16px; z-index: var(--z-sticky);
+      opacity: 0; transform: translateY(16px); pointer-events: none;
+      transition: opacity 200ms ease, transform 200ms ease;
     }
-
-    .sticky-booking-cta.is-visible {
-        opacity: 1;
-        transform: translateY(0);
-        pointer-events: auto;
-    }
-
-    .sticky-booking-cta a {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        min-height: 52px;
-        padding: 12px 18px;
-        border-radius: 9999px;
-        background: #A66B5C;
-        color: #FFFFFF;
-        font-weight: 600;
-        font-size: 16px;
-        text-decoration: none;
-        box-shadow: 0 16px 36px rgba(93, 58, 46, 0.28);
-    }
-
-    .sticky-booking-cta a:hover {
-        background: #8F5B4D;
-    }
-
-    .sticky-booking-cta .cta-copy {
-        display: block;
-        font-size: 11px;
-        font-weight: 500;
-        opacity: 0.9;
-        margin-left: 8px;
-    }
-
-    .contact-section {
-        background-color: #F5F1EB;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        padding: 48px 20px 56px;
-        text-align: center;
-    }
-
-    .contact-section h1 {
-        font-family: 'Playfair Display', serif;
-        font-size: 64px;
-        font-weight: 700;
-        color: #5D3A2E;
-        margin-bottom: 30px;
-        line-height: 1.2;
-    }
-
-    .contact-section .subtitle {
-        font-size: 24px;
-        color: #7A7A7A;
-        margin-bottom: 50px;
-        font-weight: 400;
-    }
-
-    .cta-button {
-        display: inline-block;
-        background-color: #874131;
-        color: white;
-        font-size: 20px;
-        font-weight: 600;
-        padding: 18px 56px;
-        border-radius: 9999px;
-        text-decoration: none;
-        transition: all 0.3s ease;
-        margin-bottom: 40px;
-        box-shadow: 0 8px 24px rgba(93, 58, 46, 0.25);
-    }
-
-    .cta-button:hover {
-        background-color: #70372d;
-        transform: translateY(-2px);
-        box-shadow: 0 12px 32px rgba(93, 58, 46, 0.35);
-    }
-
-    .referral-note {
-        font-size: 16px;
-        color: #999999;
-    }
-
-    .contact-footer {
-        background-color: #1A2332;
-        color: white;
-        padding: 40px 20px;
-        text-align: center;
-    }
-
-    .contact-footer .copyright {
-        font-size: 18px;
-        margin-bottom: 15px;
-    }
-
-    .contact-footer .tagline {
-        font-size: 18px;
-        color: #B8B8B8;
-    }
-
-    .contact-section .headshot {
-        display: block;
-        margin: 0 auto;
-        border-radius: 50%;
-        object-fit: cover;
-        border: 3px solid rgba(93, 58, 46, 0.15);
-    }
-
-    /* Responsive Design */
-    @media (max-width: 768px) {
-        .sticky-booking-cta {
-            left: 12px;
-            right: 12px;
-            bottom: 12px;
-        }
-
-        .sticky-booking-cta a {
-            width: 100%;
-            border-radius: 12px;
-            justify-content: center;
-            font-size: 15px;
-        }
-
-        .contact-section h1 {
-            font-size: 42px;
-        }
-
-        .contact-section .subtitle {
-            font-size: 18px;
-            margin-bottom: 40px;
-        }
-
-        .cta-button {
-            font-size: 18px;
-            padding: 16px 40px;
-        }
-
-        .contact-footer .copyright,
-        .contact-footer .tagline {
-            font-size: 16px;
-        }
-    }
-
-    @media (max-width: 480px) {
-        .contact-section {
-            padding: 40px 20px;
-        }
-
-        .contact-section h1 {
-            font-size: 32px;
-        }
-
-        .contact-section .subtitle {
-            font-size: 16px;
-        }
-
-        .cta-button {
-            font-size: 16px;
-            padding: 14px 30px;
-        }
-
-        .referral-note {
-            font-size: 14px;
-        }
-    }
+    .sticky-booking-cta.is-visible { opacity: 1; transform: translateY(0); pointer-events: auto; }
+    @media (max-width: 768px) { .sticky-booking-cta { left: 12px; right: 12px; bottom: 12px; } }
 
     /* --- PROTOTYPE: CSS-only hero parallax via scroll-driven animation --- */
     /* Runs entirely on the compositor (no scroll listener, no JS). Gated so */
@@ -215,73 +46,108 @@
         .hero-parallax {
           animation: hero-parallax-drift linear both;
           animation-timeline: scroll(root block);
-          /* Drive the animation across the first viewport of scrolling. */
           animation-range: 0 100vh;
           will-change: transform;
         }
-
         @keyframes hero-parallax-drift {
           from { transform: translateY(0); }
-          /* Matches the old JS rate (scroll * -0.5): -50vh after 100vh scroll. */
           to   { transform: translateY(-50vh); }
         }
       }
     }
   </style>
 </head>
-<body class="font-sans text-gray-900 bg-warm-50">
+<body class="font-sans bg-paper text-ink-body antialiased">
   <div id="sticky-booking-cta" class="sticky-booking-cta" aria-hidden="true">
-    <a
-      href="https://calendar.app.google/hEthvkLHVEHGzByz9?utm_source=homepage&utm_medium=sticky_cta&utm_campaign=book_intro_call"
-      target="_blank"
-      rel="noopener noreferrer"
-      data-booking-cta
-    >
-      Book Intro Call
-      <span class="cta-copy">30 min</span>
+    <a class="ao-btn ao-btn--sticky" href="https://calendar.app.google/hEthvkLHVEHGzByz9?utm_source=homepage&utm_medium=sticky_cta&utm_campaign=book_intro_call" target="_blank" rel="noopener noreferrer" data-booking-cta>
+      Book Intro Call <span class="ao-btn__note">30 min</span>
     </a>
   </div>
 
-  <!-- HERO SECTION -->
-  <section class="hero-parallax min-h-screen flex items-center justify-center px-4 bg-gradient-to-br from-warm-50 to-secondary-50">
-    <div class="max-w-4xl mx-auto text-center animate-fade-in">
-      <h1 class="text-5xl md:text-7xl font-serif font-bold text-primary-900" style="line-height: 1.15;">
-        a
-        <br>Human
-        <br>Layer
-        <br>in the
-        <br>AI era
-      </h1>
-      <p class="text-lg md:text-xl mt-8 mb-3 text-secondary-500 font-medium tracking-widest uppercase">
-        Agent to Agents
-      </p>
-      <p class="text-xl md:text-2xl mb-14 text-secondary-700 font-light">
-        From one to many
-      </p>
-      <a
-        href="https://calendar.app.google/hEthvkLHVEHGzByz9?utm_source=homepage&utm_medium=hero_cta&utm_campaign=book_intro_call"
-        target="_blank"
-        rel="noopener noreferrer"
-        data-booking-cta
-        class="inline-block px-12 py-4 bg-primary-700 text-white rounded-full hover:bg-primary-800 transition-all duration-200 transform hover:-translate-y-1 font-semibold text-lg"
-        style="box-shadow: 0 8px 24px rgba(93, 58, 46, 0.25);"
-      >
-        Let's Talk
-      </a>
+  <!-- HERO -->
+  <section class="hero-parallax ao-band min-h-screen flex items-center px-4">
+    <div class="max-w-6xl w-full mx-auto grid md:grid-cols-[1fr_auto] gap-12 md:gap-16 items-center animate-fade-in">
+      <div>
+        <p class="ao-eyebrow mb-6">Agent to Agents</p>
+        <h1 class="font-display font-bold text-ink text-5xl md:text-7xl" style="line-height: 1.15;">
+          a
+          <br>Human
+          <br>Layer
+          <br>in the
+          <br>AI era
+        </h1>
+        <p class="text-xl md:text-2xl mt-8 mb-12 text-ink-muted">From one to many</p>
+        <a class="ao-btn ao-btn--pill" href="https://calendar.app.google/hEthvkLHVEHGzByz9?utm_source=homepage&utm_medium=hero_cta&utm_campaign=book_intro_call" target="_blank" rel="noopener noreferrer" data-booking-cta>Let's Talk</a>
+      </div>
+      <figure class="hidden md:block m-0">
+        <svg class="ao-ant" viewBox="0 0 240 264" width="240" height="264" role="img" aria-labelledby="ant-title">
+          <title id="ant-title">Langton's ant after 250 steps: one agent, one rule, structure emerging</title>
+          <rect x="72" y="0" width="24" height="24"/>
+          <rect x="96" y="0" width="24" height="24"/>
+          <rect x="120" y="0" width="24" height="24"/>
+          <rect x="144" y="0" width="24" height="24"/>
+          <rect x="48" y="24" width="24" height="24"/>
+          <rect x="168" y="24" width="24" height="24"/>
+          <rect x="24" y="48" width="24" height="24"/>
+          <rect x="48" y="48" width="24" height="24"/>
+          <rect x="72" y="48" width="24" height="24"/>
+          <rect x="192" y="48" width="24" height="24"/>
+          <rect x="24" y="72" width="24" height="24"/>
+          <rect x="48" y="72" width="24" height="24"/>
+          <rect x="72" y="72" width="24" height="24"/>
+          <rect x="96" y="72" width="24" height="24"/>
+          <rect x="120" y="72" width="24" height="24"/>
+          <rect x="144" y="72" width="24" height="24"/>
+          <rect x="168" y="72" width="24" height="24"/>
+          <rect x="192" y="72" width="24" height="24"/>
+          <rect x="48" y="96" width="24" height="24"/>
+          <rect x="72" y="96" width="24" height="24"/>
+          <rect x="120" y="96" width="24" height="24"/>
+          <rect x="192" y="96" width="24" height="24"/>
+          <rect x="48" y="120" width="24" height="24"/>
+          <rect x="144" y="120" width="24" height="24"/>
+          <rect x="192" y="120" width="24" height="24"/>
+          <rect x="216" y="120" width="24" height="24"/>
+          <rect x="24" y="144" width="24" height="24"/>
+          <rect x="96" y="144" width="24" height="24"/>
+          <rect x="120" y="144" width="24" height="24"/>
+          <rect x="168" y="144" width="24" height="24"/>
+          <rect x="192" y="144" width="24" height="24"/>
+          <rect x="216" y="144" width="24" height="24"/>
+          <rect x="0" y="168" width="24" height="24"/>
+          <rect x="96" y="168" width="24" height="24"/>
+          <rect x="120" y="168" width="24" height="24"/>
+          <rect x="144" y="168" width="24" height="24"/>
+          <rect x="0" y="192" width="24" height="24"/>
+          <rect x="48" y="192" width="24" height="24"/>
+          <rect x="72" y="192" width="24" height="24"/>
+          <rect x="192" y="192" width="24" height="24"/>
+          <rect x="24" y="216" width="24" height="24"/>
+          <rect x="48" y="216" width="24" height="24"/>
+          <rect x="168" y="216" width="24" height="24"/>
+          <rect x="216" y="216" width="24" height="24"/>
+          <rect x="48" y="240" width="24" height="24"/>
+          <rect x="72" y="240" width="24" height="24"/>
+          <rect x="192" y="240" width="24" height="24"/>
+          <rect x="216" y="240" width="24" height="24"/>
+          <rect class="ao-ant__agent" x="198" y="222" width="12" height="12"/>
+        </svg>
+        <figcaption class="ao-station mt-4">One agent · one rule · 250 steps</figcaption>
+      </figure>
     </div>
   </section>
+
   <!-- THE PROBLEM -->
-  <section class="py-16 md:py-24 px-4 bg-white">
+  <section class="py-16 md:py-24 px-4 ao-band--raised">
     <div class="max-w-4xl mx-auto">
       <div class="grid md:grid-cols-2 gap-12 lg:gap-16 items-center">
-        <!-- Left column -->
         <div>
-          <h2 class="text-3xl md:text-4xl font-serif text-primary-900 mb-6" style="line-height: 1.2;">
+          <h2 class="font-display text-ink text-3xl md:text-4xl mb-6" style="line-height: 1.2;">
             We make (human)
             <br>organizations more
             <br>(super) human (e)
           </h2>
-          <div class="space-y-4 text-gray-600 leading-relaxed">
+          <div class="space-y-4 leading-relaxed">
             <p class="text-lg">
               Not through strategy decks.
               <br>Not through software deployments.
@@ -294,91 +160,57 @@
             </p>
           </div>
         </div>
-        <!-- Right column -->
         <div class="space-y-8 pt-2">
           <div>
-            <h3 class="text-sm font-medium tracking-widest uppercase text-secondary-500 mb-3">Who we work with</h3>
-            <ul class="space-y-2 text-gray-700">
-              <li class="flex items-start"><span class="text-primary-400 mr-2">—</span>Startup founders</li>
-              <li class="flex items-start"><span class="text-primary-400 mr-2">—</span>Enterprise and nonprofit leaders</li>
-              <li class="flex items-start"><span class="text-primary-400 mr-2">—</span>Machine learning and life science researchers</li>
-              <li class="flex items-start"><span class="text-primary-400 mr-2">—</span>Forward deployed engineers and client partners</li>
+            <h3 class="ao-eyebrow mb-3">Who we work with</h3>
+            <ul class="ao-dash-list space-y-2">
+              <li>Startup founders</li>
+              <li>Enterprise and nonprofit leaders</li>
+              <li>Machine learning and life science researchers</li>
+              <li>Forward deployed engineers and client partners</li>
             </ul>
           </div>
           <div>
-            <h3 class="text-sm font-medium tracking-widest uppercase text-secondary-500 mb-3">Industries</h3>
-            <ul class="space-y-2 text-gray-700">
-              <li class="flex items-start"><span class="text-primary-400 mr-2">—</span>Telco, media, and technology</li>
-              <li class="flex items-start"><span class="text-primary-400 mr-2">—</span>Financial services and cybersecurity</li>
-              <li class="flex items-start"><span class="text-primary-400 mr-2">—</span>Scientific research and development</li>
-              <li class="flex items-start"><span class="text-primary-400 mr-2">—</span>Foundations and universities</li>
+            <h3 class="ao-eyebrow mb-3">Industries</h3>
+            <ul class="ao-dash-list space-y-2">
+              <li>Telco, media, and technology</li>
+              <li>Financial services and cybersecurity</li>
+              <li>Scientific research and development</li>
+              <li>Foundations and universities</li>
             </ul>
           </div>
         </div>
       </div>
     </div>
   </section>
+
   <!-- WHAT WE DO -->
-  <section class="py-16 md:py-24 px-4 bg-secondary-50">
+  <section class="py-16 md:py-24 px-4 ao-band--sunk">
     <div class="max-w-6xl mx-auto">
-      <h2 class="text-3xl md:text-4xl font-serif font-bold text-center mb-3 text-primary-900">
-        What We Do
-      </h2>
-      <p class="text-xl md:text-2xl mb-12 text-secondary-700 font-light text-center">
-        1000x your human capital
-      </p>
+      <h2 class="font-display font-bold text-ink text-center text-3xl md:text-4xl mb-3">What We Do</h2>
+      <p class="text-xl md:text-2xl mb-12 text-ink-muted text-center">1000x your human capital</p>
 
       <div id="network-visualization" class="grid md:grid-cols-2 gap-8 lg:gap-12">
-        <div class="bg-white p-8 rounded-xl border border-secondary-200 shadow-warm transform transition-all duration-300 hover:-translate-y-1 hover:shadow-warm-lg">
-          <div class="w-10 h-1 bg-primary-500 rounded mb-6"></div>
-          <h3 class="text-2xl font-serif font-bold mb-6 text-primary-800">Human (First)</h3>
-          <ul class="space-y-4">
-            <li class="flex items-start">
-              <span class="text-primary-400 mr-3">—</span>
-              <span class="text-gray-600">How to 100x yourself for ICs</span>
-            </li>
-            <li class="flex items-start">
-              <span class="text-primary-400 mr-3">—</span>
-              <span class="text-gray-600">Scaling teams to 1000x for managers</span>
-            </li>
-            <li class="flex items-start">
-              <span class="text-primary-400 mr-3">—</span>
-              <span class="text-gray-600">Community for AI experts</span>
-            </li>
-            <li class="flex items-start">
-              <span class="text-primary-400 mr-3">—</span>
-              <span class="text-gray-600">One-on-one coaching for founders</span>
-            </li>
-            <li class="flex items-start">
-              <span class="text-primary-400 mr-3">—</span>
-              <span class="text-gray-600">Designing AI workflows for humans</span>
-            </li>
+        <div class="ao-card ao-card--featured ao-card--lift p-8">
+          <p class="ao-eyebrow mb-4">Human</p>
+          <h3 class="ao-card__title text-2xl mb-6">Human (First)</h3>
+          <ul class="ao-dash-list space-y-4">
+            <li>How to 100x yourself for ICs</li>
+            <li>Scaling teams to 1000x for managers</li>
+            <li>Community for AI experts</li>
+            <li>One-on-one coaching for founders</li>
+            <li>Designing AI workflows for humans</li>
           </ul>
         </div>
-        <div class="bg-white p-8 rounded-xl border border-secondary-200 shadow-warm transform transition-all duration-300 hover:-translate-y-1 hover:shadow-warm-lg">
-          <div class="w-10 h-1 bg-warm-500 rounded mb-6"></div>
-          <h3 class="text-2xl font-serif font-bold mb-6 text-primary-800">AI (Native)</h3>
-          <ul class="space-y-4">
-            <li class="flex items-start">
-              <span class="text-primary-400 mr-3">—</span>
-              <span class="text-gray-600">Sourcing compute & AI infrastructure</span>
-            </li>
-            <li class="flex items-start">
-              <span class="text-primary-400 mr-3">—</span>
-              <span class="text-gray-600">Evals, RL, & continuous learning</span>
-            </li>
-            <li class="flex items-start">
-              <span class="text-primary-400 mr-3">—</span>
-              <span class="text-gray-600">Model routing & token strategy</span>
-            </li>
-            <li class="flex items-start">
-              <span class="text-primary-400 mr-3">—</span>
-              <span class="text-gray-600">Designing loops & harness tuning</span>
-            </li>
-            <li class="flex items-start">
-              <span class="text-primary-400 mr-3">—</span>
-              <span class="text-gray-600">Minimizing latency & maximizing reliability</span>
-            </li>
+        <div class="ao-card ao-card--featured ao-card--lift p-8">
+          <p class="ao-eyebrow mb-4">Machine</p>
+          <h3 class="ao-card__title text-2xl mb-6">AI (Native)</h3>
+          <ul class="ao-dash-list space-y-4">
+            <li>Sourcing compute &amp; AI infrastructure</li>
+            <li>Evals, RL, &amp; continuous learning</li>
+            <li>Model routing &amp; token strategy</li>
+            <li>Designing loops &amp; harness tuning</li>
+            <li>Minimizing latency &amp; maximizing reliability</li>
           </ul>
         </div>
       </div>
@@ -453,23 +285,21 @@
   -->
 
   <!-- WHY BOTH? -->
-  <section class="py-16 md:py-24 px-4 bg-warm-50">
+  <section class="py-16 md:py-24 px-4 ao-band">
     <div class="max-w-3xl mx-auto text-center">
-      <h2 class="text-3xl md:text-4xl font-serif font-bold mb-10 text-primary-900">
-        Why Both?
-      </h2>
+      <h2 class="font-display font-bold text-ink text-3xl md:text-4xl mb-10">Why Both?</h2>
       <div class="space-y-6">
-        <p class="text-xl text-gray-600 leading-relaxed">
+        <p class="text-xl leading-relaxed">
           When teams combine human expertise with AI native tools and culture, they don't just perform better, they redefine what's possible for humanity.
         </p>
-        <p class="text-xl text-gray-600 leading-relaxed">
+        <p class="text-xl leading-relaxed">
           Organizations that simultaneously evolve at the human layer, while fashioning technology workers need to compete effectively, win in the AI era.
         </p>
-        <blockquote class="mt-12 p-8 bg-white rounded-xl shadow-warm border-l-4 border-primary-400">
-          <p class="text-lg italic text-gray-600 leading-relaxed">
+        <blockquote class="ao-hairline mt-12 pt-10 pb-2 mx-auto max-w-2xl">
+          <p class="ao-quote text-2xl leading-snug">
             "My team accomplished what would have taken two quarters in two weeks. We could not have done it without Agent to Agents."
           </p>
-          <cite class="block mt-4 text-sm font-medium text-secondary-500 not-italic">— Senior PM, Google</cite>
+          <cite class="ao-station flex mt-6 justify-center not-italic">— Senior PM, Google</cite>
         </blockquote>
       </div>
     </div>
@@ -544,87 +374,73 @@
   -->
 
   <!-- FEATURED CONTENT -->
-  <section class="py-16 md:py-24 px-4 bg-white">
+  <section class="py-16 md:py-24 px-4 ao-band--raised">
     <div class="max-w-4xl mx-auto">
-      <h2 class="text-sm font-medium tracking-widest uppercase text-secondary-500 mb-8">
-        Field Notes
-      </h2>
-      <div class="bg-warm-50 p-8 md:p-10 rounded-xl border border-secondary-200">
-        <article class="max-w-none">
-          <h3 class="text-2xl font-serif font-bold text-primary-800 mb-6">
-            When Economists Meet AI: Why We Need Rigorous Thinking at the Frontier
-          </h3>
-          <div class="space-y-4 text-gray-600 leading-relaxed">
-            <p>At a moment when the world's superpowers are racing toward superintelligence and GPUs convert electricity into intelligence, we need our greatest minds to engage seriously with AI — not offer surface-level commentary.</p>
-            <p>ChatGPT reached 40% of American adults in under 2 years. LLM performance on coding benchmarks jumped from under 10% to 85% in just 18 months. AI models now pass professional certifications. DeepSeek proved frontier performance doesn't require US-level compute, upending assumptions behind export controls.</p>
-            <p>The question isn't whether AI will transform knowledge work. It's how we adapt when one superhuman-in-the-loop can do the work of 1000 knowledge workers.</p>
-          </div>
-          <a href="https://kevinselhi.com/post/789905256338292736/part-of-the-problem-is-the-extraordinary-place" class="inline-flex items-center mt-6 text-primary-600 hover:text-primary-700 font-medium transition-colors" target="_blank" rel="noopener noreferrer">
-            Read more →
-          </a>
-        </article>
-      </div>
+      <h2 class="ao-eyebrow mb-8">Field Notes</h2>
+      <article class="ao-sheet" style="font-family: var(--font-sans); font-size: 16px; line-height: 1.625; color: var(--ink-body);">
+        <div class="ao-sheet__head" style="font-family: var(--font-mono);">
+          <span class="ao-sheet__label">Field notes · kevinselhi.com</span>
+          <span class="ao-sheet__label">Excerpt</span>
+        </div>
+        <h3 class="font-display font-bold text-ink text-2xl mb-6">
+          When Economists Meet AI: Why We Need Rigorous Thinking at the Frontier
+        </h3>
+        <div class="space-y-4">
+          <p>At a moment when the world's superpowers are racing toward superintelligence and GPUs convert electricity into intelligence, we need our greatest minds to engage seriously with AI — not offer surface-level commentary.</p>
+          <p>ChatGPT reached 40% of American adults in under 2 years. LLM performance on coding benchmarks jumped from under 10% to 85% in just 18 months. AI models now pass professional certifications. DeepSeek proved frontier performance doesn't require US-level compute, upending assumptions behind export controls.</p>
+          <p>The question isn't whether AI will transform knowledge work. It's how we adapt when one superhuman-in-the-loop can do the work of 1000 knowledge workers.</p>
+        </div>
+        <a href="https://kevinselhi.com/post/789905256338292736/part-of-the-problem-is-the-extraordinary-place" class="ao-link inline-flex items-center mt-6" target="_blank" rel="noopener noreferrer">Read more →</a>
+      </article>
     </div>
   </section>
 
   <!-- HOW WE WORK -->
-  <section class="py-16 md:py-24 px-4 bg-gradient-to-b from-secondary-100 to-secondary-50">
+  <section class="py-16 md:py-24 px-4 ao-band--sunk">
     <div class="max-w-5xl mx-auto">
-      <h2 class="text-3xl md:text-4xl font-serif font-bold text-center mb-12 text-primary-900">
-        How We Work
-      </h2>
-      <div class="grid md:grid-cols-2 gap-8 lg:gap-10">
-        <div class="bg-white p-8 rounded-xl border border-secondary-200">
-          <span class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-primary-100 text-primary-700 font-serif font-bold text-lg mb-5">1</span>
-          <h3 class="text-xl font-bold text-primary-800 mb-3">Discovery</h3>
-          <p class="text-gray-600 leading-relaxed">Starting with a 30-minute discovery call, we document your team's challenges, dynamics, and goals through in-depth interviews and assessments.</p>
-        </div>
-        <div class="bg-white p-8 rounded-xl border border-secondary-200">
-          <span class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-primary-100 text-primary-700 font-serif font-bold text-lg mb-5">2</span>
-          <h3 class="text-xl font-bold text-primary-800 mb-3">Strategy</h3>
-          <p class="text-gray-600 leading-relaxed">Together, we design a customized roadmap balancing quick wins with long-term transformation, guided by a philosophy of self-directed evolution, intentional management, and regenerative growth.</p>
-        </div>
-        <div class="bg-white p-8 rounded-xl border border-secondary-200">
-          <span class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-primary-100 text-primary-700 font-serif font-bold text-lg mb-5">3</span>
-          <h3 class="text-xl font-bold text-primary-800 mb-3">Implementation</h3>
-          <p class="text-gray-600 leading-relaxed">We work alongside your team, providing hands-on coaching and technical guidance to ensure smooth adoption and sustainable change. Inspiring curiosity, confidence, and connection.</p>
-        </div>
-        <div class="bg-white p-8 rounded-xl border border-secondary-200">
-          <span class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-primary-100 text-primary-700 font-serif font-bold text-lg mb-5">4</span>
-          <h3 class="text-xl font-bold text-primary-800 mb-3">Community</h3>
-          <p class="text-gray-600 leading-relaxed">Through continuous feedback and iteration, we refine both human processes and AI systems to maximize impact and maintain momentum. Built on a foundation of strong relationships and enduring community.</p>
-        </div>
-      </div>
+      <h2 class="font-display font-bold text-ink text-center text-3xl md:text-4xl mb-12">How We Work</h2>
+      <ol class="ao-route ao-route--steps">
+        <li class="ao-route__stop">
+          <span class="ao-route__dot" aria-hidden="true">1</span>
+          <span class="ao-route__mode">Step 1</span>
+          <span class="ao-route__city">Discovery</span>
+          <span class="ao-route__note">Starting with a 30-minute discovery call, we document your team's challenges, dynamics, and goals through in-depth interviews and assessments.</span>
+        </li>
+        <li class="ao-route__stop">
+          <span class="ao-route__dot" aria-hidden="true">2</span>
+          <span class="ao-route__mode">Step 2</span>
+          <span class="ao-route__city">Strategy</span>
+          <span class="ao-route__note">Together, we design a customized roadmap balancing quick wins with long-term transformation, guided by a philosophy of self-directed evolution, intentional management, and regenerative growth.</span>
+        </li>
+        <li class="ao-route__stop">
+          <span class="ao-route__dot" aria-hidden="true">3</span>
+          <span class="ao-route__mode">Step 3</span>
+          <span class="ao-route__city">Implementation</span>
+          <span class="ao-route__note">We work alongside your team, providing hands-on coaching and technical guidance to ensure smooth adoption and sustainable change. Inspiring curiosity, confidence, and connection.</span>
+        </li>
+        <li class="ao-route__stop">
+          <span class="ao-route__dot" aria-hidden="true">4</span>
+          <span class="ao-route__mode">Step 4</span>
+          <span class="ao-route__city">Community</span>
+          <span class="ao-route__note">Through continuous feedback and iteration, we refine both human processes and AI systems to maximize impact and maintain momentum. Built on a foundation of strong relationships and enduring community.</span>
+        </li>
+      </ol>
     </div>
   </section>
 
   <!-- CONTACT -->
-
-  <section id="contact" class="contact-section">
-    <a
-      href="https://calendar.app.google/hEthvkLHVEHGzByz9?utm_source=homepage&utm_medium=headshot_cta&utm_campaign=book_intro_call"
-      target="_blank"
-      rel="noopener noreferrer"
-      data-booking-cta
-    ><img src="assets/kevin-headshot.png" alt="Kevin" class="headshot" style="width:100px; height:100px; margin-bottom:24px;"></a>
-    <h1>Book a 30 minute call</h1>
-    <p class="subtitle">Every transformation starts with a conversation</p>
-    <a
-      href="https://calendar.app.google/hEthvkLHVEHGzByz9?utm_source=homepage&utm_medium=footer_cta&utm_campaign=book_intro_call"
-      target="_blank"
-      rel="noopener noreferrer"
-      data-booking-cta
-      class="cta-button"
-    >
-      Let's Talk
-    </a>
-    <p class="referral-note">New clients accepted only via referral</p>
+  <section id="contact" class="ao-band py-12 md:py-16 px-5 text-center">
+    <a href="https://calendar.app.google/hEthvkLHVEHGzByz9?utm_source=homepage&utm_medium=headshot_cta&utm_campaign=book_intro_call" target="_blank" rel="noopener noreferrer" data-booking-cta class="inline-block mb-6"><img src="assets/kevin-headshot.png" alt="Kevin" class="ao-headshot"></a>
+    <h2 class="font-display font-bold text-ink text-[32px] sm:text-[42px] md:text-[64px] mb-8" style="line-height: 1.2;">Book a 30 minute call</h2>
+    <p class="text-base sm:text-lg md:text-2xl text-ink-muted mb-10 md:mb-12">Every transformation starts with a conversation</p>
+    <a class="ao-btn ao-btn--pill mb-10" href="https://calendar.app.google/hEthvkLHVEHGzByz9?utm_source=homepage&utm_medium=footer_cta&utm_campaign=book_intro_call" target="_blank" rel="noopener noreferrer" data-booking-cta>Let's Talk</a>
+    <p class="ao-station flex justify-center">New clients accepted only via referral</p>
   </section>
 
   <!-- Footer -->
-  <footer class="contact-footer">
-    <p class="copyright">© 2026 Agent to Agents. All rights reserved.</p>
-    <p class="tagline">Human First \ AI-Native</p>
+  <footer class="ao-footer">
+    <p class="ao-footer__copyright">© 2026 Agent to Agents. All rights reserved.</p>
+    <p class="ao-footer__tagline">Human First \ AI-Native</p>
   </footer>
 
   <script src="js/main.js"></script>
